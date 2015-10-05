@@ -11,11 +11,15 @@ Tomás Marcondes Bezerra Paim - 7157602
 #define TRUE	1
 #define FALSE	0
 #define MAXCHAR 100
+#define MAXPROCESSOS 20
+
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct node Node;
 struct node
 {
-  char   livre;
+  char   tipo;
   int    inicio;
   int    tamanho;
   Node*  prox;
@@ -39,8 +43,4 @@ struct processo
   Acesso* head;
 };
 
-
-
 char** tokenize(char* str);
-
-Processo inputline(char *linha);
