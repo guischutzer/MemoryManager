@@ -13,7 +13,7 @@ int main() {
 
     while(1) {
 
-	    snprintf(shell_prompt, sizeof(shell_prompt), "[%s] ", getcwd(NULL, 1024));
+	    snprintf(shell_prompt, sizeof(shell_prompt), "[ep2] ");
 
 	    input = readline(shell_prompt);
 	        
