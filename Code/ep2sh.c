@@ -10,7 +10,8 @@
 int main() {
     char*  input, shell_prompt[MAXCHAR];
     char** argv;
-    int pag, fit;
+    int pag = 0, fit = 0;
+
 
     while(1) {
 
