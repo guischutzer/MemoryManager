@@ -10,6 +10,7 @@
 int main() {
     char*  input, shell_prompt[MAXCHAR];
     char** argv;
+    int pag, fit;
 
     while(1) {
 
@@ -19,29 +20,31 @@ int main() {
 	        
 	    add_history(input);
 
-    	if (fork() != 0) {
+    	argv = tokenize(input);
 
-	        waitpid(-1, NULL, 0);
+    	if (strcmp(argv[0], "carrega") == 0) {
+    		printf("Modo carrega.\n");
+    	}
+    	else if (strcmp(argv[0], "espaco") == 0) {
+    		printf("Modo espaco %d.\n", atoi(argv[1]));
+    		pag = 0;
+    		fit = atoi(argv[1]);
+    	}
+    	else if (strcmp(argv[0], "substitui") == 0) {
+    		printf("Modo substitui %d.\n", atoi(argv[1]));
+    		fit = 0;
+    		pag = atoi(argv[1]);
+    	}
+    	else if (strcmp(argv[0], "executa") == 0) {
+    		printf("Modo executa.\n");
+    	}
+    	else if (strcmp(argv[0], "sai") == 0) {
+    		printf("Modo sai.\n");
+    		break;
+    	}
 
-	        free(input);
+    	free(argv);
 
-	    } else {
-
-	    	argv = tokenize(input);
-
-	    	if (strcmp(argv[0], "pwd") == 0) {
-	    		printf("%s\n", getcwd(NULL, 1024));
-	    	}
-	    	else if (strcmp(argv[0], "cd") == 0) {
-	    		chdir(argv[1]);
-	    	}
-	    	else {
-	    		execve(argv[0], argv, NULL);
-	    	}
-
-	    	free(argv);
-
-	    }
     }
     return 0;
 }
