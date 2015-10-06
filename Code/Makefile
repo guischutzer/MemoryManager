@@ -1,4 +1,4 @@
-CFLAGS= -g -Wall -O2 -ansi -pedantic -Wno-unused-result
+CFLAGS= -Wall -O2 -ansi -pedantic -Wno-unused-result
 CC = gcc
 RM = rm
 #---------------------------------------------------
