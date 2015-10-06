@@ -1,6 +1,6 @@
 # MemoryManager
 
-####MAC0422 - Sistemas Operacionais  
+####MAC0422 - Sistemas Operacionais - IME-USP  
 ######EP2 - 05/10/2015
 
 Guilherme Souto Schützer - 8658544  
