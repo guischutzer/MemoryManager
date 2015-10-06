@@ -1,24 +1,30 @@
-CFLAGS= -lreadline
+CFLAGS= -g -Wall -O2 -ansi -pedantic -Wno-unused-result
 CC = gcc
 RM = rm
 #---------------------------------------------------
 
-all: ep2sh ep2 testebin clean
+all: ep2 testebin clean
+
+ep2: main.o utils.o io.o
+	$(CC) -lreadline -o ep2 main.o utils.o io.o
 
 testebin: testebin.c
 	$(CC) $(CFLAGS) testebin.c -o testebin
 
-ep2sh: ep2sh.c utils.o
-	$(CC) $(CFLAGS) ep2sh.c utils.o -o ep2sh
+main.o: main.c utils.h io.h
+	$(CC) $(CFLAGS) -lreadline -c main.c
 
-ep2: ep2.c utils.o
-	$(CC) $(CFLAGS) ep2.c utils.o -o ep2
+io.o: io.h io.c utils.h
+	$(CC) $(CFLAGS) -c io.c
 
 utils.o: utils.h utils.c
 	$(CC) $(CFLAGS) -c utils.c
 
+
+
+
 clean:
-	mv ep2sh ../Test/
-	mv ep2 ../Test/
-	mv testebin ../Test/
+	mkdir -p ../bin
+	mv ep2 ../bin/
+	mv testebin ../bin/
 	rm *.o

@@ -11,6 +11,7 @@ Tomás Marcondes Bezerra Paim - 7157602
 
 #include <stdio.h>
 #include "utils.h"
+#include "io.h"
 
 Processo inputProcesso(char* linha) {
   int       i;
@@ -47,26 +48,25 @@ Processo inputProcesso(char* linha) {
 }
 
 
-int main(int argc, char const *argv[]) {
+int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
 
   FILE     *entrada;
   char     linha[MAXCHAR];
-  int      i, j, nproc = 0;
-  int      total, virtual;
+  int      nproc;
   char   **tokens;
-  Processo lista_proc[MAXPROCESSOS];
 
-  entrada = fopen(argv[1], "r");
+  entrada = fopen(nome, "r");
 
   fgets(linha, MAXCHAR, entrada);
   tokens = tokenize(linha);
-  total = atoi(tokens[0]);
-  virtual = atoi(tokens[1]);
+  *total = atoi(tokens[0]);
+  *virtual = atoi(tokens[1]);
+  free(tokens);
 
-  for(i = 0; fgets(linha, MAXCHAR, entrada); i++){
-    lista_proc[i] = inputProcesso(linha);
-    nproc++;
-  }
+  for(nproc = 0; fgets(linha, MAXCHAR, entrada); nproc++)
+    lista_proc[nproc] = inputProcesso(linha);
 
-  return 0;
+  fclose(entrada);
+
+  return nproc;
 }

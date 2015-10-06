@@ -8,6 +8,9 @@ Tomás Marcondes Bezerra Paim - 7157602
 
 */
 
+#ifndef _UTILS_H
+#define _UTILS_H
+
 #define TRUE	1
 #define FALSE	0
 #define MAXCHAR 100
@@ -44,3 +47,5 @@ struct processo
 };
 
 char** tokenize(char* str);
+
+#endif

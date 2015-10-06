@@ -1,4 +1,4 @@
-#include<stdio.h>
+#include <stdio.h>
 
 	void criabin(int t, FILE *arquivo)
 	{
@@ -12,9 +12,7 @@
 
 	int main()
 	{
-		int counter;
 		FILE *ptr_myfile;
-		char i;
 
 		ptr_myfile=fopen("test.bin","wb");
 		if (!ptr_myfile)
