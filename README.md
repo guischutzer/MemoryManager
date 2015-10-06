@@ -1,9 +1,9 @@
 # MemoryManager
 
-MAC0422 - Sistemas Operacionais \\
+MAC0422 - Sistemas Operacionais \n
 EP2 - 05/10/2015
 
-Guilherme Souto Schützer - 8658544 \\
+Guilherme Souto Schützer - 8658544 \n
 Tomás Marcondes Bezerra Paim - 7157602
 
 Compiling:
