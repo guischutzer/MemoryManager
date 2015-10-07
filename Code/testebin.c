@@ -5,7 +5,6 @@
 		int i;
 		char c = -1;
 		for (i = 0; i < t; i++){
-			printf("t = %d\n", t);
 			fwrite(&c, sizeof(char), 1, arquivo);
 		}
 	}

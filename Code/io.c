@@ -13,6 +13,15 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "utils.h"
 #include "io.h"
 
+void criabin(int t, FILE *arquivo)
+  {
+    int i;
+    char c = -1;
+    for (i = 0; i < t; i++){
+      fwrite(&c, sizeof(char), 1, arquivo);
+    }
+  }
+
 Processo inputProcesso(char* linha) {
   int       i;
   char**    tokens = NULL;
