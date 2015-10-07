@@ -15,7 +15,7 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "utils.h"
 
 char** tokenize(char* str) {
-  char** tokens;
+  char** tokens = NULL;
   int i;
 
   tokens = malloc(sizeof (char*) * MAXCHAR);

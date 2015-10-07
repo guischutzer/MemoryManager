@@ -17,8 +17,8 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "io.h"
 
 int main() {
-    char*  input, shell_prompt[MAXCHAR];
-    char** argv;
+    char*  input = NULL, shell_prompt[MAXCHAR];
+    char** argv = NULL;
     int pag = 0, fit = 0;
     int nproc, total, virtual;
     Processo *lista_proc;
@@ -34,10 +34,9 @@ int main() {
 
     	if (strcmp(argv[0], "carrega") == 0) {
     		printf("Modo carrega.\n");
-        if(lista_proc != NULL)
-          liberaListaProcessos(lista_proc, nproc);
-
-        nproc = carrega(argv[1], &total, &virtual, lista_proc);
+        	if(lista_proc != NULL)
+          		liberaListaProcessos(lista_proc, nproc);
+        	nproc = carrega(argv[1], &total, &virtual, lista_proc);
     	}
     	else if (strcmp(argv[0], "espaco") == 0) {
     		pag = 0;
@@ -88,8 +87,10 @@ int main() {
     		break;
     	}
 
-      	liberaListaProcessos(lista_proc, nproc);
-    	free(argv);
+      	if (lista_proc != NULL)
+      		liberaListaProcessos(lista_proc, nproc);
+    	if (argv != NULL)
+    		free(argv);
 
     }
     return 0;

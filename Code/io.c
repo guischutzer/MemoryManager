@@ -15,7 +15,7 @@ Tomás Marcondes Bezerra Paim - 7157602
 
 Processo inputProcesso(char* linha) {
   int       i;
-  char**    tokens;
+  char**    tokens = NULL;
   Processo p;
   Acesso   *a;
 
@@ -42,7 +42,8 @@ Processo inputProcesso(char* linha) {
     a->prox = NULL;
   }
 
-  free(tokens);
+  if(tokens != NULL)
+    free(tokens);
 
   return p;
 }
@@ -50,10 +51,10 @@ Processo inputProcesso(char* linha) {
 
 int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
 
-  FILE     *a, *b;
+  FILE     *a = NULL, *b = NULL;
   char     linha[MAXCHAR];
   int      nproc, i;
-  char   **tokens;
+  char   **tokens = NULL;
 
   a = fopen(nome, "r");
   b = fopen(nome, "r");
@@ -62,7 +63,8 @@ int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
   tokens = tokenize(linha);
   *total = atoi(tokens[0]);
   *virtual = atoi(tokens[1]);
-  free(tokens);
+  if (tokens != NULL)
+    free(tokens);
 
   for(nproc = 0; fgets(linha, MAXCHAR, a); nproc++);
   lista_proc = malloc(sizeof(Processo) * nproc);
@@ -76,12 +78,13 @@ int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
 }
 
 void liberaListaAcessos(Acesso *head){
-  Acesso *morta;
+  Acesso *morta = NULL;
 
   morta = head;
   while(head != NULL){
     head = head->prox;
-    free(morta);
+    if (morta != NULL)
+      free(morta);
   }
 }
 
@@ -91,6 +94,7 @@ void liberaListaProcessos(Processo* lista_proc, int tamanho){
   for(i = 0; i < tamanho; i++)
     liberaListaAcessos(lista_proc[i].head);
 
-  free(lista_proc);
+  if(lista_proc != NULL)
+    free(lista_proc);
   lista_proc = NULL;
 }
