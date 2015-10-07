@@ -11,6 +11,7 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <sys/time.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "utils.h"
@@ -22,7 +23,6 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 	headtot = NULL;
 	headvirt = NULL;
 	aux = NULL;
-
 	
 	headtot = malloc(sizeof(Node));
 	headtot->tipo = 'L';
