@@ -40,20 +40,51 @@ int main() {
         nproc = carrega(argv[1], &total, &virtual, lista_proc);
     	}
     	else if (strcmp(argv[0], "espaco") == 0) {
-    		printf("Modo espaco %d.\n", atoi(argv[1]));
     		pag = 0;
     		fit = atoi(argv[1]);
+    		switch(atoi(argv[1])){
+    			case 1 :
+    				printf("Gerencia First Fit.\n");
+    				break;
+    			case 2 :
+    				printf("Gerencia Next Fit.\n");
+    				break;
+    			case 3 :
+    				printf("Gerencia Quick Fit.\n");
+    				break;
+    			default :
+    				printf("Comando desconhecido.\n");
+    				return 1;
+    				break;
+    		}
     	}
     	else if (strcmp(argv[0], "substitui") == 0) {
-    		printf("Modo substitui %d.\n", atoi(argv[1]));
     		fit = 0;
     		pag = atoi(argv[1]);
+    		switch(atoi(argv[1])){
+    			case 1 :
+    				printf("Substituicao Not Recently Used Page.\n");
+    				break;
+    			case 2 :
+    				printf("Substituicao First-In, First-Out.\n");
+    				break;
+    			case 3 :
+    				printf("Substituicao Second-Chance Page.\n");
+    				break;
+    			case 4 :
+    				printf("Substituicao Least Recently Used Page.\n");
+    				break;
+    			default :
+    				printf("Comando desconhecido.\n");
+    				return 1;
+    				break;
+    		}
     	}
     	else if (strcmp(argv[0], "executa") == 0) {
-    		printf("Modo executa.\n");
+    		printf("Iniciando execucao do simulador...\n");
     	}
     	else if (strcmp(argv[0], "sai") == 0) {
-    		printf("Modo sai.\n");
+    		printf("Adeus.\n");
     		break;
     	}
 
