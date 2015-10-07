@@ -16,11 +16,39 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "utils.h"
 #include "io.h"
 
+void firstFit(){
+
+}
+
+void nextFit(){
+
+}
+
+void quickFit(){
+
+}
+
+void NRUP(){
+
+}
+
+void FIFO(){
+
+}
+
+void SCP(){
+
+}
+
+void LRUP(){
+
+}
+
 
 int main() {
     char*  input, shell_prompt[MAXCHAR];
     char** argv;
-    int pag = 0, fit = 0, nproc = 0;
+    int pag = 0, fit = 0, nproc = 0, intv = 0;
     int total = 0, virtual = 0;
     int i = 0;
     FILE *ftotal = NULL, *fvirtual = NULL;
@@ -66,8 +94,8 @@ int main() {
     				printf("Gerencia Quick Fit.\n");
     				break;
     			default :
-    				printf("Comando desconhecido.\n");
-    				return 1;
+    				printf("Comando desconhecido. Por favor insira outro comando.\n");
+    				fit = 0;
     				break;
     		}
     	}
@@ -88,12 +116,19 @@ int main() {
     				printf("Substituicao Least Recently Used Page.\n");
     				break;
     			default :
-    				printf("Comando desconhecido.\n");
-    				return 1;
+    				printf("Comando desconhecido. Por favor insira outro comando.\n");
+    				pag = 0;
     				break;
     		}
     	}
     	else if (strcmp(argv[0], "executa") == 0) {
+    		if (argv[1] != NULL){
+    			intv = atoi(argv[1]);
+    			printf ("Intervalo definido como %d.\n", intv);
+    		}
+    		else printf ("Nenhum intervalo definido.\n");
+
+
     		if(pag==0 && fit == 0){
     			printf("Escolha um algoritmo de gerenciamento antes de executar.\n");
     		}
@@ -123,8 +158,47 @@ int main() {
     			}
 
     			criabin(virtual, fvirtual);
-    			
 
+    			if (fit != 0){
+    				switch(fit){
+    					case 1 :
+    						printf("Gerencia First Fit.\n");
+    						firstFit();
+    						break;
+    					case 2 :
+    						printf("Gerencia Next Fit.\n");
+    						nextFit();
+    						break;
+    					case 3 :
+    						printf("Gerencia Quick Fit.\n");
+    						quickFit();
+    						break;
+    					default :
+    						break;
+    				}
+    			}
+    			else {
+    				switch(pag){
+    					case 1 :
+    						printf("Substituicao Not Recently Used Page.\n");
+    						NRUP();
+    						break;
+    					case 2 :
+    						printf("Substituicao First-In, First-Out.\n");
+    						FIFO();
+    						break;
+    					case 3 :
+		    				printf("Substituicao Second-Chance Page.\n");
+		    				SCP();
+		    				break;
+		    			case 4 :
+		    				printf("Substituicao Least Recently Used Page.\n");
+		    				LRUP();
+		    				break;
+		    			default :
+		    				break;
+    				}
+    			}	
     		}
     	}
     	else if (strcmp(argv[0], "sai") == 0) {
