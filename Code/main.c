@@ -16,31 +16,42 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "utils.h"
 #include "io.h"
 
-void firstFit(){
+void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
+	Node *head, *aux;
+
+	head = NULL;
+	aux = NULL;
+	
+	head = malloc(sizeof(Node));
+	head->tipo = 'L';
+	head->inicio = 0;
+	head->tamanho = total;
+	head->prox = NULL;
+
 
 }
 
-void nextFit(){
+void nextFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
 
 }
 
-void quickFit(){
+void quickFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
 
 }
 
-void NRUP(){
+void NRUP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
 
 }
 
-void FIFO(){
+void FIFO(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
 
 }
 
-void SCP(){
+void SCP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
 
 }
 
-void LRUP(){
+void LRUP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
 
 }
 
@@ -163,15 +174,15 @@ int main() {
     				switch(fit){
     					case 1 :
     						printf("Gerencia First Fit.\n");
-    						firstFit();
+    						firstFit(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
     						break;
     					case 2 :
     						printf("Gerencia Next Fit.\n");
-    						nextFit();
+    						nextFit(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
     						break;
     					case 3 :
     						printf("Gerencia Quick Fit.\n");
-    						quickFit();
+    						quickFit(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
     						break;
     					default :
     						break;
@@ -181,19 +192,19 @@ int main() {
     				switch(pag){
     					case 1 :
     						printf("Substituicao Not Recently Used Page.\n");
-    						NRUP();
+    						NRUP(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
     						break;
     					case 2 :
     						printf("Substituicao First-In, First-Out.\n");
-    						FIFO();
+    						FIFO(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
     						break;
     					case 3 :
 		    				printf("Substituicao Second-Chance Page.\n");
-		    				SCP();
+		    				SCP(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
 		    				break;
 		    			case 4 :
 		    				printf("Substituicao Least Recently Used Page.\n");
-		    				LRUP();
+		    				LRUP(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
 		    				break;
 		    			default :
 		    				break;
