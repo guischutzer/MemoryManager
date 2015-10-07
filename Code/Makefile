@@ -1,4 +1,4 @@
-CFLAGS= -Wall -O2 -ansi -pedantic -Wno-unused-result
+CFLAGS= -Wall -O2 -ansi -pedantic -Wno-unused-result -lreadline
 CC = gcc
 RM = rm
 #---------------------------------------------------
@@ -6,13 +6,13 @@ RM = rm
 all: ep2 testebin clean
 
 ep2: main.o utils.o io.o
-	$(CC) -lreadline -o ep2 main.o utils.o io.o
+	$(CC) $(CFLAGS) -o ep2 main.o utils.o io.o
 
 testebin: testebin.c
 	$(CC) $(CFLAGS) testebin.c -o testebin
 
 main.o: main.c utils.h io.h
-	$(CC) $(CFLAGS) -lreadline -c main.c
+	$(CC) $(CFLAGS) -c main.c
 
 io.o: io.h io.c utils.h
 	$(CC) $(CFLAGS) -c io.c
