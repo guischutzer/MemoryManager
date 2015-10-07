@@ -19,6 +19,8 @@ Tomás Marcondes Bezerra Paim - 7157602
 
 void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
 	Node *headtot, *headvirt, *aux;
+	struct timeval tv, inicio, fim;
+	double totime, ultime = -1, espera, tf;
 
 	headtot = NULL;
 	headvirt = NULL;
@@ -36,6 +38,20 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 	headvirt->tamanho = virtual;
 	headvirt->prox = NULL;	
 
+	gettimeofday(&tv, NULL);
+	inicio = tv;
+
+	while(1){
+		gettimeofday(&tv, NULL);
+		fim = tv;
+		totime = (double) fim.tv_sec + fim.tv_usec/10e6 - (inicio.tv_sec + fim.tv_usec/10e6);
+		if(totime != ultime){
+			ultime = totime;
+			printf("total = %f\n", totime);
+		if(totime == 10)
+			break;
+		}
+	}
 
 }
 
