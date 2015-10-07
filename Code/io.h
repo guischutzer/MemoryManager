@@ -9,7 +9,7 @@ void criabin(int t, FILE *arquivo);
 
 void imprimeProc (Processo proc);
 
-int carrega(char* nome, int* total, int* virtual, Processo* lista_proc);
+Processo* carrega(char* nome, int* total, int* virtual, int* nproc);
 
 void liberaListaAcessos(Acesso *head);
 

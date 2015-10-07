@@ -69,22 +69,23 @@ void imprimeProc (Processo proc){
   }
 }
 
-int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
+Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
 
   FILE     *a = NULL, *b = NULL;
   char     linha[MAXCHAR];
-  int      nproc, i;
+  int      i, nprocloc;
   char   **tokens = NULL;
+  Processo* lista_proc = NULL;
 
   a = fopen(nome, "r");
   if (a == NULL){
     printf("ERRO: arquivo %s não encontrado.\n", nome);
-    return 1;
+    exit;
   }
   b = fopen(nome, "r");
   if (b == NULL){
     printf("ERRO: arquivo %s não encontrado.\n", nome);
-    return 1;
+    exit;
   }
 
   fgets(linha, MAXCHAR, a);
@@ -95,18 +96,25 @@ int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
   if (tokens != NULL)
     free(tokens);
 
-  for(nproc = 0; fgets(linha, MAXCHAR, a); nproc++);
-  lista_proc = malloc(sizeof(Processo) * nproc);
+  for(nprocloc = 0; fgets(linha, MAXCHAR, a); nprocloc++)
+    printf("nproc = %d.\n", nprocloc);
+  
+  lista_proc = malloc(nprocloc * sizeof(Processo));
+  if(lista_proc == NULL)
+    printf("Falha ao alocar lista_proc.\n");
 
-  for(i = 0; fgets(linha, MAXCHAR, b); i++)
-    lista_proc[i] = inputProcesso(linha);
+  for(i = 0; fgets(linha, MAXCHAR, b); i++){
+    (lista_proc[i]) = inputProcesso(linha);
+  }
+
+  *nproc = nprocloc;
 
   fclose(a);
 
-  for (i = 0; i < nproc; i++)
-    imprimeProc(lista_proc[i]);
+/*  for (i = 0; i < nproc; i++)
+    imprimeProc(*lista_proc[i]); */
 
-  return nproc;
+  return lista_proc;
 }
 
 void liberaListaAcessos(Acesso *head){
