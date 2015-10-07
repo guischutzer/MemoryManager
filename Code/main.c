@@ -17,16 +17,24 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "io.h"
 
 void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
-	Node *head, *aux;
+	Node *headtot, *headvirt, *aux;
 
-	head = NULL;
+	headtot = NULL;
+	headvirt = NULL;
 	aux = NULL;
+
 	
-	head = malloc(sizeof(Node));
-	head->tipo = 'L';
-	head->inicio = 0;
-	head->tamanho = total;
-	head->prox = NULL;
+	headtot = malloc(sizeof(Node));
+	headtot->tipo = 'L';
+	headtot->inicio = 0;
+	headtot->tamanho = total;
+	headtot->prox = NULL;
+
+	headvirt = malloc(sizeof(Node));
+	headvirt->tipo = 'L';
+	headvirt->inicio = 0;
+	headvirt->tamanho = virtual;
+	headvirt->prox = NULL;	
 
 
 }
@@ -132,6 +140,15 @@ int main() {
     				break;
     		}
     	}
+
+    	else if (strcmp(argv[0], "imprime") == 0) {
+    		if (lista_proc != NULL){
+    			for (i = 0; i < nproc; i++)
+	        		imprimeProc(lista_proc[i]);
+    		}
+    		else printf("Carregue um arquivo para imprimir.\n");
+    	}
+
     	else if (strcmp(argv[0], "executa") == 0) {
     		if (argv[1] != NULL){
     			intv = atoi(argv[1]);
@@ -169,6 +186,7 @@ int main() {
     			}
 
     			criabin(virtual, fvirtual);
+    			
 
     			if (fit != 0){
     				switch(fit){
