@@ -59,6 +59,7 @@ int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
   b = fopen(nome, "r");
 
   fgets(linha, MAXCHAR, a);
+  fgets(linha, MAXCHAR, b);
   tokens = tokenize(linha);
   *total = atoi(tokens[0]);
   *virtual = atoi(tokens[1]);
@@ -82,6 +83,7 @@ void liberaListaAcessos(Acesso *head){
   while(head != NULL){
     head = head->prox;
     free(morta);
+    morta = NULL;
   }
 }
 

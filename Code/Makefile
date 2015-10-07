@@ -6,19 +6,19 @@ RM = rm
 all: ep2 testebin clean
 
 ep2: main.o utils.o io.o
-	$(CC) $(CFLAGS) -o ep2 main.o utils.o io.o
+	$(CC) -o ep2 main.o utils.o io.o $(CFLAGS)
 
 testebin: testebin.c
-	$(CC) $(CFLAGS) testebin.c -o testebin
+	$(CC) testebin.c -o testebin $(CFLAGS)
 
 main.o: main.c utils.h io.h
-	$(CC) $(CFLAGS) -c main.c
+	$(CC) -c main.c $(CFLAGS)
 
 io.o: io.h io.c utils.h
-	$(CC) $(CFLAGS) -c io.c
+	$(CC) -c io.c $(CFLAGS)
 
 utils.o: utils.h utils.c
-	$(CC) $(CFLAGS) -c utils.c
+	$(CC) -c utils.c $(CFLAGS)
 
 
 

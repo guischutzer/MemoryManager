@@ -19,8 +19,8 @@ Tomás Marcondes Bezerra Paim - 7157602
 int main() {
     char*  input, shell_prompt[MAXCHAR];
     char** argv;
-    int pag = 0, fit = 0;
-    int nproc, total, virtual;
+    int pag = 0, fit = 0, nproc = 0;
+    int total, virtual;
     Processo *lista_proc;
 
     lista_proc = NULL;
@@ -34,8 +34,9 @@ int main() {
 
     	if (strcmp(argv[0], "carrega") == 0) {
     		printf("Modo carrega.\n");
-        if(lista_proc != NULL)
+        if(lista_proc != NULL){
           liberaListaProcessos(lista_proc, nproc);
+        }
 
         nproc = carrega(argv[1], &total, &virtual, lista_proc);
     	}
@@ -88,7 +89,9 @@ int main() {
     		break;
     	}
 
-      liberaListaProcessos(lista_proc, nproc);
+      if(lista_proc != NULL)
+        liberaListaProcessos(lista_proc, nproc);
+
     	free(argv);
 
     }
