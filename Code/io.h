@@ -7,6 +7,8 @@ Processo inputProcesso(char* linha);
 
 void criabin(int t, FILE *arquivo);
 
+void imprimeProc (Processo proc);
+
 int carrega(char* nome, int* total, int* virtual, Processo* lista_proc);
 
 void liberaListaAcessos(Acesso *head);

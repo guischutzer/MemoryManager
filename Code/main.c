@@ -16,11 +16,13 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "utils.h"
 #include "io.h"
 
+
 int main() {
     char*  input, shell_prompt[MAXCHAR];
     char** argv;
     int pag = 0, fit = 0, nproc = 0;
     int total = 0, virtual = 0;
+    int i = 0;
     FILE *ftotal = NULL, *fvirtual = NULL;
     Processo *lista_proc = NULL;
 
@@ -40,6 +42,15 @@ int main() {
 
 	        nproc = carrega(argv[1], &total, &virtual, lista_proc);
 	        printf("total = %d, virtual = %d.\n", total, virtual);
+	        printf("numero de processos = %d.\n", nproc);
+	        if(lista_proc == NULL && nproc > 0){
+	        	printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
+	        	return 1;
+	        }
+
+	        for (i = 0; i < nproc; i++)
+	        	imprimeProc(lista_proc[i]);
+
     	}
     	else if (strcmp(argv[0], "espaco") == 0) {
     		pag = 0;
