@@ -50,23 +50,47 @@ Processo inputProcesso(char* linha) {
 
 int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
 
-  FILE     *entrada;
+  FILE     *a, *b;
   char     linha[MAXCHAR];
-  int      nproc;
+  int      nproc, i;
   char   **tokens;
 
-  entrada = fopen(nome, "r");
+  a = fopen(nome, "r");
+  b = fopen(nome, "r");
 
-  fgets(linha, MAXCHAR, entrada);
+  fgets(linha, MAXCHAR, a);
   tokens = tokenize(linha);
   *total = atoi(tokens[0]);
   *virtual = atoi(tokens[1]);
   free(tokens);
 
-  for(nproc = 0; fgets(linha, MAXCHAR, entrada); nproc++)
-    lista_proc[nproc] = inputProcesso(linha);
+  for(nproc = 0; fgets(linha, MAXCHAR, a); nproc++);
+  lista_proc = malloc(sizeof(Processo) * nproc);
 
-  fclose(entrada);
+  for(i = 0; fgets(linha, MAXCHAR, b); i++)
+    lista_proc[i] = inputProcesso(linha);
+
+  fclose(a);
 
   return nproc;
+}
+
+void liberaListaAcessos(Acesso *head){
+  Acesso *morta;
+
+  morta = head;
+  while(head != NULL){
+    head = head->prox;
+    free(morta);
+  }
+}
+
+void liberaListaProcessos(Processo* lista_proc, int tamanho){
+  int i;
+
+  for(i = 0; i < tamanho; i++)
+    liberaListaAcessos(lista_proc[i].head);
+
+  free(lista_proc);
+  lista_proc = NULL;
 }

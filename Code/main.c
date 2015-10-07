@@ -21,20 +21,22 @@ int main() {
     char** argv;
     int pag = 0, fit = 0;
     int nproc, total, virtual;
-    Processo lista_proc[MAXPROCESSOS];
+    Processo *lista_proc;
+
+    lista_proc = NULL;
 
     while(1) {
 
 	    snprintf(shell_prompt, sizeof(shell_prompt), "[ep2] ");
-
 	    input = readline(shell_prompt);
-
 	    add_history(input);
-
     	argv = tokenize(input);
 
     	if (strcmp(argv[0], "carrega") == 0) {
     		printf("Modo carrega.\n");
+        if(lista_proc != NULL)
+          liberaListaProcessos(lista_proc, nproc);
+
         nproc = carrega(argv[1], &total, &virtual, lista_proc);
     	}
     	else if (strcmp(argv[0], "espaco") == 0) {

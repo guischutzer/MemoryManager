@@ -14,7 +14,6 @@ Tomás Marcondes Bezerra Paim - 7157602
 #define TRUE	1
 #define FALSE	0
 #define MAXCHAR 100
-#define MAXPROCESSOS 20
 
 #include <stdlib.h>
 #include <string.h>
