@@ -21,16 +21,8 @@ int main() {
     char*  input, shell_prompt[MAXCHAR];
     char** argv;
     int pag = 0, fit = 0, nproc = 0;
-<<<<<<< HEAD
     int total, virtual, i;
-
     Processo *lista_proc;
-=======
-    int total = 0, virtual = 0;
-    int i = 0;
-    FILE *ftotal = NULL, *fvirtual = NULL;
-    Processo *lista_proc = NULL;
->>>>>>> e10f770f3d6ef04f5c84556e06fefc7ba58f71ed
 
     lista_proc = NULL;
 
