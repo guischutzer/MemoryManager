@@ -20,7 +20,7 @@ int main() {
     char*  input, shell_prompt[MAXCHAR];
     char** argv;
     int pag = 0, fit = 0, nproc = 0;
-    int total, virtual;
+    int total, virtual, i;
 
     Processo *lista_proc;
 
@@ -39,6 +39,8 @@ int main() {
         		liberaListaProcessos(lista_proc, nproc);
 
         nproc = carrega(argv[1], &total, &virtual, lista_proc);
+
+        for()
     	}
     	else if (strcmp(argv[0], "espaco") == 0) {
     		pag = 0;
