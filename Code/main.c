@@ -20,9 +20,9 @@ int main() {
     char*  input, shell_prompt[MAXCHAR];
     char** argv;
     int pag = 0, fit = 0, nproc = 0;
-    int total, virtual;
+    int total = 0, virtual = 0;
 
-    Processo *lista_proc;
+    Processo *lista_proc = NULL;
 
     lista_proc = NULL;
 
@@ -82,7 +82,17 @@ int main() {
     		}
     	}
     	else if (strcmp(argv[0], "executa") == 0) {
-    		printf("Iniciando execucao do simulador...\n");
+    		if(pag==0 && fit == 0){
+    			printf("Escolha um algoritmo de gerenciamento antes de executar.\n");
+    		}
+    		
+    		else if (lista_proc == NULL) {
+    			printf ("Carregue um arquivo antes de executar.\n");
+    		}
+
+    		else {
+    			printf("Iniciando execucao do simulador...\n");
+    		}
     	}
     	else if (strcmp(argv[0], "sai") == 0) {
     		printf("Adeus.\n");

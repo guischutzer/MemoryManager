@@ -57,7 +57,15 @@ int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
   char   **tokens = NULL;
 
   a = fopen(nome, "r");
+  if (a == NULL){
+    printf("ERRO: arquivo %s não encontrado.\n", nome);
+    return 1;
+  }
   b = fopen(nome, "r");
+  if (b == NULL){
+    printf("ERRO: arquivo %s não encontrado.\n", nome);
+    return 1;
+  }
 
   fgets(linha, MAXCHAR, a);
   fgets(linha, MAXCHAR, b);
