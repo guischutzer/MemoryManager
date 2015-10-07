@@ -40,7 +40,7 @@ int main() {
       		if(lista_proc != NULL)
         		liberaListaProcessos(lista_proc, nproc);
 
-	        nproc = carrega(argv[1], &total, &virtual, lista_proc);
+	        lista_proc = carrega(argv[1], &total, &virtual, &nproc);
 	        printf("total = %d, virtual = %d.\n", total, virtual);
 	        printf("numero de processos = %d.\n", nproc);
 	        if(lista_proc == NULL && nproc > 0){
@@ -131,6 +131,7 @@ int main() {
     		printf("Adeus.\n");
     		break;
     	}
+    }
 
     if(lista_proc != NULL)
         liberaListaProcessos(lista_proc, nproc);
@@ -144,6 +145,5 @@ int main() {
     if (fvirtual != NULL)
     	free(fvirtual);
 
-    }
     return 0;
 }
