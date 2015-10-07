@@ -80,12 +80,12 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
   a = fopen(nome, "r");
   if (a == NULL){
     printf("ERRO: arquivo %s não encontrado.\n", nome);
-    exit;
+    return NULL;
   }
   b = fopen(nome, "r");
   if (b == NULL){
     printf("ERRO: arquivo %s não encontrado.\n", nome);
-    exit;
+    return NULL;
   }
 
   fgets(linha, MAXCHAR, a);
@@ -98,7 +98,7 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
 
   for(nprocloc = 0; fgets(linha, MAXCHAR, a); nprocloc++)
     printf("nproc = %d.\n", nprocloc);
-  
+
   lista_proc = malloc(nprocloc * sizeof(Processo));
   if(lista_proc == NULL)
     printf("Falha ao alocar lista_proc.\n");
@@ -110,9 +110,6 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
   *nproc = nprocloc;
 
   fclose(a);
-
-/*  for (i = 0; i < nproc; i++)
-    imprimeProc(*lista_proc[i]); */
 
   return lista_proc;
 }

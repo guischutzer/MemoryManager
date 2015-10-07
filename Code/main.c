@@ -21,8 +21,10 @@ int main() {
     char*  input, shell_prompt[MAXCHAR];
     char** argv;
     int pag = 0, fit = 0, nproc = 0;
-    int total, virtual, i;
-    Processo *lista_proc;
+    int total = 0, virtual = 0;
+    int i = 0;
+    FILE *ftotal = NULL, *fvirtual = NULL;
+    Processo *lista_proc = NULL;
 
     lista_proc = NULL;
 
@@ -45,11 +47,15 @@ int main() {
 	        	printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
 	        	return 1;
 	        }
-
-	        for (i = 0; i < nproc; i++)
-	        	imprimeProc(lista_proc[i]);
-
     	}
+      else if (strcmp(argv[0], "imprime") == 0){
+        if (lista_proc != NULL){
+          for (i = 0; i < nproc; i++)
+            imprimeProc(lista_proc[i]);
+        }
+        else
+          printf("Não há processos.\n");
+      }
     	else if (strcmp(argv[0], "espaco") == 0) {
     		pag = 0;
     		fit = atoi(argv[1]);
