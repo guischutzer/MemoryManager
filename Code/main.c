@@ -88,7 +88,7 @@ int main() {
     		break;
     	}
 
-      liberaListaProcessos(lista_proc, nproc);
+      	liberaListaProcessos(lista_proc, nproc);
     	free(argv);
 
     }
