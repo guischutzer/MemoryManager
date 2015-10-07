@@ -13,6 +13,15 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "utils.h"
 #include "io.h"
 
+void criabin(int t, FILE *arquivo)
+  {
+    int i;
+    char c = -1;
+    for (i = 0; i < t; i++){
+      fwrite(&c, sizeof(char), 1, arquivo);
+    }
+  }
+
 Processo inputProcesso(char* linha) {
   int       i;
   char**    tokens = NULL;
@@ -48,6 +57,17 @@ Processo inputProcesso(char* linha) {
   return p;
 }
 
+void imprimeProc (Processo proc){
+  Acesso *acc = NULL;
+  printf("Processo %s\n", proc.nome);
+  printf("Tempo de inicio e fim: %d, %d.\n", proc.t0, proc.tf);
+  printf("Tamanho do processo: %d bytes.\n", proc.b);
+  acc = proc.head;
+  while(acc != NULL){
+    printf("Acesso a posicao %d no instante %d.\n", acc->pos, acc->inst);
+    acc = acc->prox;
+  }
+}
 
 int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
 
@@ -57,7 +77,15 @@ int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
   char   **tokens = NULL;
 
   a = fopen(nome, "r");
+  if (a == NULL){
+    printf("ERRO: arquivo %s não encontrado.\n", nome);
+    return 1;
+  }
   b = fopen(nome, "r");
+  if (b == NULL){
+    printf("ERRO: arquivo %s não encontrado.\n", nome);
+    return 1;
+  }
 
   fgets(linha, MAXCHAR, a);
   fgets(linha, MAXCHAR, b);
@@ -74,6 +102,9 @@ int carrega(char* nome, int* total, int* virtual, Processo* lista_proc) {
     lista_proc[i] = inputProcesso(linha);
 
   fclose(a);
+
+  for (i = 0; i < nproc; i++)
+    imprimeProc(lista_proc[i]);
 
   return nproc;
 }

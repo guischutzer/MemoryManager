@@ -16,13 +16,21 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "utils.h"
 #include "io.h"
 
+
 int main() {
     char*  input, shell_prompt[MAXCHAR];
     char** argv;
     int pag = 0, fit = 0, nproc = 0;
+<<<<<<< HEAD
     int total, virtual, i;
 
     Processo *lista_proc;
+=======
+    int total = 0, virtual = 0;
+    int i = 0;
+    FILE *ftotal = NULL, *fvirtual = NULL;
+    Processo *lista_proc = NULL;
+>>>>>>> e10f770f3d6ef04f5c84556e06fefc7ba58f71ed
 
     lista_proc = NULL;
 
@@ -35,12 +43,20 @@ int main() {
 
     	if (strcmp(argv[0], "carrega") == 0) {
     		printf("Modo carrega.\n");
-      	if(lista_proc != NULL)
+      		if(lista_proc != NULL)
         		liberaListaProcessos(lista_proc, nproc);
 
-        nproc = carrega(argv[1], &total, &virtual, lista_proc);
+	        nproc = carrega(argv[1], &total, &virtual, lista_proc);
+	        printf("total = %d, virtual = %d.\n", total, virtual);
+	        printf("numero de processos = %d.\n", nproc);
+	        if(lista_proc == NULL && nproc > 0){
+	        	printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
+	        	return 1;
+	        }
 
-        for()
+	        for (i = 0; i < nproc; i++)
+	        	imprimeProc(lista_proc[i]);
+
     	}
     	else if (strcmp(argv[0], "espaco") == 0) {
     		pag = 0;
@@ -84,17 +100,55 @@ int main() {
     		}
     	}
     	else if (strcmp(argv[0], "executa") == 0) {
-    		printf("Iniciando execucao do simulador...\n");
+    		if(pag==0 && fit == 0){
+    			printf("Escolha um algoritmo de gerenciamento antes de executar.\n");
+    		}
+
+    		else if (total == 0 && virtual == 0) {
+    			printf ("Carregue um arquivo antes de executar.\n");
+    		}
+
+    		else {
+    			printf("Iniciando execucao do simulador...\n");
+    			ftotal = fopen("/tmp/ep2.mem","wb");
+    			if (ftotal != NULL)
+    				printf ("ftotal aberto com sucesso!\n");
+    			else {
+    				printf ("ERRO: falha ao criar o arquivo ftotal.\n");
+    				return 1;
+    			}
+
+    			criabin(total, ftotal);
+
+    			fvirtual = fopen("/tmp/ep2.vir","wb");
+    			if (fvirtual != NULL)
+    				printf ("fvirtual aberto com sucesso!\n");
+    			else {
+    				printf ("ERRO: falha ao criar o arquivo fvirtual.\n");
+    				return 1;
+    			}
+
+    			criabin(virtual, fvirtual);
+
+
+    		}
     	}
     	else if (strcmp(argv[0], "sai") == 0) {
     		printf("Adeus.\n");
     		break;
     	}
 
-      if(lista_proc != NULL)
+    if(lista_proc != NULL)
         liberaListaProcessos(lista_proc, nproc);
 
+    if (argv != NULL)
     	free(argv);
+
+    if (ftotal != NULL)
+    	free(ftotal);
+
+    if (fvirtual != NULL)
+    	free(fvirtual);
 
     }
     return 0;
