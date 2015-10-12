@@ -23,15 +23,7 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 	headtot = NULL;
 	headvirt = NULL;
 	aux = NULL;
-<<<<<<< HEAD
 
-	head = malloc(sizeof(Node));
-	head->tipo = 'L';
-	head->inicio = 0;
-	head->tamanho = total;
-	head->prox = NULL;
-=======
-	
 	headtot = malloc(sizeof(Node));
 	headtot->tipo = 'L';
 	headtot->inicio = 0;
@@ -42,9 +34,7 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 	headvirt->tipo = 'L';
 	headvirt->inicio = 0;
 	headvirt->tamanho = virtual;
-	headvirt->prox = NULL;	
->>>>>>> 2279b9d5f2ee7cf9bb1501a1ff5e31a84e0436b9
-
+	headvirt->prox = NULL;
 
 }
 
@@ -199,7 +189,7 @@ int main() {
     			}
 
     			criabin(virtual, fvirtual);
-    			
+
 
     			if (fit != 0){
     				switch(fit){
