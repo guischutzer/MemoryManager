@@ -18,15 +18,6 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct node Node;
-struct node
-{
-  char   tipo;
-  int    inicio;
-  int    tamanho;
-  Node*  prox;
-};
-
 typedef struct acesso Acesso;
 struct acesso
 {
@@ -44,6 +35,17 @@ struct processo
   int     b;
   Acesso* head;
 };
+
+typedef struct node Node;
+struct node
+{
+  Processo* tipo;
+  int       inicio;
+  int       tamanho;
+  Node*     prox;
+};
+
+
 
 char** tokenize(char* str);
 
