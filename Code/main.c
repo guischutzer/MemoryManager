@@ -150,6 +150,7 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 						aux = aux->prox;
 				}
 				if (encontrou == 0){
+
 					aux = headvirt;	
 					while (aux != NULL){
 						if ((aux->tipo == NULL) && (aux->tamanho >= lista_proc[i].b)){
@@ -173,6 +174,10 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 							}
 							/* escreve os bits no arquivo de memoria */
 						}
+						if (encontrou == 1)
+							break;
+						else
+							aux = aux->prox;
 					}	
 				}
 				if (encontrou == 0)
