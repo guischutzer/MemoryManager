@@ -29,6 +29,18 @@ void imprimeNode(Node* head){
 	}
 }
 
+void imprimeBin(FILE* arquivo, int arqsize){
+	int i;
+	char c;
+	for (i = 0; i < arqsize; i++)
+		{
+			fseek(arquivo, sizeof(char)*i,SEEK_SET);
+			fread(&c, sizeof(char), 1, arquivo);
+			printf("%d ", c);
+		}
+		printf ("\n");
+}
+
 void mergeNode(Node* head){
 	Node* aux = NULL;
 	Node* livrer = NULL;
@@ -49,7 +61,8 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 	Node *headtot, *headvirt, *aux, *aux2, *newNode;
 	struct timeval tv, inicio, fim;
 	double totime, ultime = -1, espera, tf;
-	int i = 0, procfim = 0, encontrou = 0, tatual = -1;
+	int i = 0, procfim = 0, encontrou = 0, tatual = -1, pos = 0;
+	char escreve;
 
 	headtot = NULL;
 	headvirt = NULL;
@@ -91,6 +104,11 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 					aux->tipo = NULL; 	/* simplesmente dizemos que a memoria agora esta livre */
 					procfim++;			/* incrementamos o contador de processos terminados */
 					/* codigo que volta o arquivo binario correspondente para -1 */
+					fseek(ftotal, aux->inicio, SEEK_SET);
+					escreve = -1;
+					for (pos = 0; pos < aux->tamanho; pos++)
+						fwrite(&escreve, sizeof(char), 1, ftotal);
+
 				}
 				aux = aux->prox;
 			}
@@ -102,6 +120,10 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 					aux->tipo = NULL; 	/* simplesmente dizemos que a memoria agora esta livre */
 					procfim++;			/* incrementamos o contador de processos terminados */
 					/* codigo que volta o arquivo binario correspondente para -1 */
+					fseek(fvirtual, aux->inicio, SEEK_SET);
+					escreve = -1;
+					for (pos = 0; pos < aux->tamanho; pos++)
+						fwrite(&escreve, sizeof(char), 1, fvirtual);
 				}
 				aux = aux->prox;
 			}
@@ -142,7 +164,10 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 						else {
 							aux->tipo = &(lista_proc[i]);
 						}
-						/* escreve os bits no arquivo de memoria */
+						fseek(ftotal, aux->inicio, SEEK_SET);
+						escreve = i;
+						for (pos = 0; pos < aux->tamanho; pos++)
+							fwrite(&escreve, sizeof(char), 1, ftotal);
 					}
 					if (encontrou == 1)
 						break;
@@ -173,6 +198,10 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 								aux->tipo = &(lista_proc[i]);
 							}
 							/* escreve os bits no arquivo de memoria */
+							fseek(fvirtual, aux->inicio, SEEK_SET);
+							escreve = i;
+							for (pos = 0; pos < aux->tamanho; pos++)
+								fwrite(&escreve, sizeof(char), 1, fvirtual);
 						}
 						if (encontrou == 1)
 							break;
@@ -187,8 +216,12 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 			}
 
 			if (tatual % intv == 0){
-					imprimeNode(headtot);
-					imprimeNode(headvirt);
+					/* imprimeNode(headtot);
+					imprimeNode(headvirt); */
+					printf("Arquivo binario da memoria total: \n");
+					imprimeBin(ftotal, total);
+					printf("Arquivo binario da memoria virtual: \n");
+					imprimeBin(fvirtual, virtual);
 				}
 
 
