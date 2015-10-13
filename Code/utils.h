@@ -36,7 +36,7 @@ struct processo
 typedef struct node Node;
 struct node
 {
-  Processo* tipo;
+  char      tipo;
   int       inicio;
   int       tamanho;
   Node*     prox;

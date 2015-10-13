@@ -1,8 +1,8 @@
 
 void mergeNode(Node* head);
 
-void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc);
+int firstFit(FILE* arquivo, int pid, int tamanho, Node* lista);
 
-void nextFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc);
+int nextFit(FILE* arquivo, int pid, int tamanho, Node *lista);
 
-void quickFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc);
+int quickFit(FILE* arquivo, int pid, int tamanho, Node *lista);

@@ -6,7 +6,7 @@ Processo inputProcesso(char* linha);
 
 void imprimeNode(Node* head);
 
-void criabin(int t, FILE *arquivo);
+void escreveBin(char pid, FILE* arquivo, int origem, int pags);
 
 void imprimeProc (Processo proc);
 

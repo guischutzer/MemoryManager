@@ -13,20 +13,13 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "utils.h"
 #include "io.h"
 
-void criabin(int t, FILE *arquivo) {
-    int i;
-    char c = -1;
-    for (i = 0; i < t; i++)
-      fwrite(&c, sizeof(char), 1, arquivo);
-}
-
 void imprimeNode(Node* head) {
 	Node* aux = NULL;
 	aux = head;
 	while (aux != NULL){
-		if (aux->tipo == NULL)
+		if (aux->tipo == 'L')
 			printf ("Memoria livre de tamanho ");
-		else printf ("Processo %s ocupando memoria de tamanho ", aux->tipo->nome);
+		else printf ("Processo ocupando memoria de tamanho ");
 		printf ("%d com inicio em %d.\n", aux->tamanho, aux->inicio);
 		aux = aux->prox;
 	}
@@ -45,6 +38,20 @@ void imprimeBin(FILE* arquivo, int tamanho) {
 	printf ("\n");
 }
 
+void escreveBin(char pid, FILE* arquivo, int origem, int pags){
+	int i;
+
+	printf("pid = %d\n", pid);
+	printf("origem = %d, pags = %d\n", origem, pags);
+
+	fseek(arquivo, (sizeof(char)*origem*16)+1, SEEK_SET);
+
+	for(i = 0; i < pags*16; i++){
+		fwrite(&pid, sizeof(pid), 1, arquivo);
+	}
+	printf("i = %d\n", i);
+}
+
 Processo inputProcesso(char* linha) {
   int       i;
   char**    tokens = NULL;
@@ -56,11 +63,13 @@ Processo inputProcesso(char* linha) {
   strcpy(p.nome, tokens[1]);
   p.t0    = atoi(tokens[0]);
   p.tf    = atoi(tokens[2]);
-  p.b     = atoi(tokens[3]);
+  p.b     = atoi(tokens[3])/16;
+  if(atoi(tokens[3]) % 16 != 0)
+    p.b++;
 
   if(tokens[4] != NULL) {
     a = malloc(sizeof(Acesso));
-    a->pos = atoi(tokens[4]);
+    a->pos = atoi(tokens[4])/16;
     a->inst = atoi(tokens[5]);
     p.head = a;
 
@@ -114,8 +123,8 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
   fgets(linha, MAXCHAR, a);
   fgets(linha, MAXCHAR, b);
   tokens = tokenize(linha);
-  *total = atoi(tokens[0]);
-  *virtual = atoi(tokens[1]);
+  *total = atoi(tokens[0])/16;
+  *virtual = atoi(tokens[1])/16;
   if (tokens != NULL)
     free(tokens);
 
