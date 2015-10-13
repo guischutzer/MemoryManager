@@ -35,12 +35,14 @@ void imprimeNode(Node* head) {
 void imprimeBin(FILE* arquivo, int tamanho) {
 	int i;
 	char c;
-	for (i = 0; i < tamanho; i++) {
+	for (i = 1; i <= tamanho; i++) {
 			fseek(arquivo, sizeof(char)*i,SEEK_SET);
 			fread(&c, sizeof(char), 1, arquivo);
 			printf("%4d", c);
-		}
-		printf ("\n");
+      if (i%16 == 0)
+        printf("\n");
+	}
+	printf ("\n");
 }
 
 Processo inputProcesso(char* linha) {
