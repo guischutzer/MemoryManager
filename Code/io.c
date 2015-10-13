@@ -35,12 +35,14 @@ void imprimeNode(Node* head) {
 void imprimeBin(FILE* arquivo, int tamanho) {
 	int i;
 	char c;
-	for (i = 0; i < tamanho; i++) {
+	for (i = 1; i <= tamanho; i++) {
 			fseek(arquivo, sizeof(char)*i,SEEK_SET);
 			fread(&c, sizeof(char), 1, arquivo);
-			printf("%d ", c);
-		}
-		printf ("\n");
+			printf("%4d", c);
+      if (i%16 == 0)
+        printf("\n");
+	}
+	printf ("\n");
 }
 
 Processo inputProcesso(char* linha) {
@@ -139,15 +141,14 @@ void liberaListaAcessos(Acesso *head){
   Acesso *morta = NULL;
 
   morta = head;
-  printf("Oi.");
+
   while(head != NULL){
     head = head->prox;
 
-    printf("Morta.");
+
     free(morta);
     morta = NULL;
   }
-  printf("\n");
 }
 
 void liberaListaProcessos(Processo* lista_proc, int tamanho){
@@ -156,7 +157,6 @@ void liberaListaProcessos(Processo* lista_proc, int tamanho){
   for(i = 0; i < tamanho; i++)
     liberaListaAcessos(lista_proc[i].head);
 
-  printf("liberando lista...\n");
   free(lista_proc);
   lista_proc = NULL;
 }

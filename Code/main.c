@@ -19,7 +19,6 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "page.h"
 #include "io.h"
 
-
 int main() {
     char*  input, shell_prompt[MAXCHAR];
     char** argv;
@@ -127,7 +126,7 @@ int main() {
 
     		else {
     			printf("Iniciando execucao do simulador...\n");
-    			ftotal = fopen("/tmp/ep2.mem","wb");
+    			ftotal = fopen("/tmp/ep2.mem","wb+");
     			if (ftotal != NULL)
     				printf ("ftotal aberto com sucesso!\n");
     			else {
@@ -137,7 +136,8 @@ int main() {
 
     			criabin(total, ftotal);
 
-    			fvirtual = fopen("/tmp/ep2.vir","wb");
+    			fvirtual = fopen("/tmp/ep2.vir","wb+");
+
     			if (fvirtual != NULL)
     				printf ("fvirtual aberto com sucesso!\n");
     			else {
@@ -145,7 +145,7 @@ int main() {
     				return 1;
     			}
 
-          criabin(virtual, fvirtual);
+    			criabin(virtual, fvirtual);
 
     			if (fit != 0){
     				switch(fit){

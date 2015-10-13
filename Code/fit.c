@@ -191,11 +191,10 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 					imprimeBin(fvirtual, virtual);
 					printf ("\n");
 				}
-
 		}
 
 	}
-	printf ("Simulacao terminada no instante %d\n", tatual);
+	printf ("Simulacao terminada no instante %d\n", (int) ultime);
 
 }
 
