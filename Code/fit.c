@@ -35,16 +35,15 @@ void mergeNode(Node* head){
 
 
 void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
-	Node *headtot, *headvirt, *aux, *aux2, *newNode;
+	Node *headtot, *headvirt, *aux, *newNode;
 	struct timeval tv, inicio, fim;
-	double totime, ultime = -1, espera, tf;
+	double totime, ultime = -1;
 	int i = 0, procfim = 0, encontrou = 0, tatual = -1, pos = 0;
 	char escreve;
 
 	headtot = NULL;
 	headvirt = NULL;
 	aux = NULL;
-	aux2 = NULL;
 	newNode = NULL;
 
 	headtot = malloc(sizeof(Node));
