@@ -34,7 +34,7 @@ void imprimeBin(FILE* arquivo, int arqsize){
 	char c;
 	for (i = 0; i < arqsize; i++)
 		{
-			fseek(arquivo, sizeof(char)*i,SEEK_SET);
+			fseek(arquivo, sizeof(char)*i, SEEK_SET);
 			fread(&c, sizeof(char), 1, arquivo);
 			printf("%d ", c);
 		}
@@ -57,7 +57,7 @@ void mergeNode(Node* head){
 }
 
 
-void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
+void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotalw, FILE *fvirtualw, Processo *lista_proc){
 	Node *headtot, *headvirt, *aux, *aux2, *newNode;
 	struct timeval tv, inicio, fim;
 	double totime, ultime = -1, espera, tf;
@@ -104,10 +104,10 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 					aux->tipo = NULL; 	/* simplesmente dizemos que a memoria agora esta livre */
 					procfim++;			/* incrementamos o contador de processos terminados */
 					/* codigo que volta o arquivo binario correspondente para -1 */
-					fseek(ftotal, aux->inicio, SEEK_SET);
+					fseek(ftotalw, aux->inicio, SEEK_SET);
 					escreve = -1;
 					for (pos = 0; pos < aux->tamanho; pos++)
-						fwrite(&escreve, sizeof(char), 1, ftotal);
+						fwrite(&escreve, sizeof(char), 1, ftotalw);
 
 				}
 				aux = aux->prox;
@@ -120,10 +120,10 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 					aux->tipo = NULL; 	/* simplesmente dizemos que a memoria agora esta livre */
 					procfim++;			/* incrementamos o contador de processos terminados */
 					/* codigo que volta o arquivo binario correspondente para -1 */
-					fseek(fvirtual, aux->inicio, SEEK_SET);
+					fseek(fvirtualw, aux->inicio, SEEK_SET);
 					escreve = -1;
 					for (pos = 0; pos < aux->tamanho; pos++)
-						fwrite(&escreve, sizeof(char), 1, fvirtual);
+						fwrite(&escreve, sizeof(char), 1, fvirtualw);
 				}
 				aux = aux->prox;
 			}
@@ -164,10 +164,10 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 						else {
 							aux->tipo = &(lista_proc[i]);
 						}
-						fseek(ftotal, aux->inicio, SEEK_SET);
+						fseek(ftotalw, aux->inicio, SEEK_SET);
 						escreve = i;
 						for (pos = 0; pos < aux->tamanho; pos++)
-							fwrite(&escreve, sizeof(char), 1, ftotal);
+							fwrite(&escreve, sizeof(char), 1, ftotalw);
 					}
 					if (encontrou == 1)
 						break;
@@ -198,10 +198,10 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 								aux->tipo = &(lista_proc[i]);
 							}
 							/* escreve os bits no arquivo de memoria */
-							fseek(fvirtual, aux->inicio, SEEK_SET);
+							fseek(fvirtualw, aux->inicio, SEEK_SET);
 							escreve = i;
 							for (pos = 0; pos < aux->tamanho; pos++)
-								fwrite(&escreve, sizeof(char), 1, fvirtual);
+								fwrite(&escreve, sizeof(char), 1, fvirtualw);
 						}
 						if (encontrou == 1)
 							break;
@@ -219,9 +219,9 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 					/* imprimeNode(headtot);
 					imprimeNode(headvirt); */
 					printf("Arquivo binario da memoria total: \n");
-					imprimeBin(ftotal, total);
+					imprimeBin(ftotalw, total);
 					printf("Arquivo binario da memoria virtual: \n");
-					imprimeBin(fvirtual, virtual);
+					imprimeBin(fvirtualw, virtual);
 				}
 
 
@@ -232,27 +232,27 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 
 }
 
-void nextFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
+void nextFit(int nproc, int total, int virtual, int intv, FILE *ftotalw, FILE *fvirtualw, Processo *lista_proc){
 
 }
 
-void quickFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
+void quickFit(int nproc, int total, int virtual, int intv, FILE *ftotalw, FILE *fvirtualw, Processo *lista_proc){
 
 }
 
-void NRUP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
+void NRUP(int nproc, int total, int virtual, int intv, FILE *ftotalw, FILE *fvirtualw, Processo *lista_proc){
 
 }
 
-void FIFO(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
+void FIFO(int nproc, int total, int virtual, int intv, FILE *ftotalw, FILE *fvirtualw, Processo *lista_proc){
 
 }
 
-void SCP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
+void SCP(int nproc, int total, int virtual, int intv, FILE *ftotalw, FILE *fvirtualw, Processo *lista_proc){
 
 }
 
-void LRUP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
+void LRUP(int nproc, int total, int virtual, int intv, FILE *ftotalw, FILE *fvirtualw, Processo *lista_proc){
 
 }
 
@@ -263,7 +263,7 @@ int main() {
     int pag = 0, fit = 0, nproc = 0, intv = 0;
     int total = 0, virtual = 0;
     int i = 0;
-    FILE *ftotal = NULL, *fvirtual = NULL;
+    FILE *ftotalw = NULL, *fvirtualw = NULL;
     Processo *lista_proc = NULL;
 
     lista_proc = NULL;
@@ -360,40 +360,40 @@ int main() {
 
     		else {
     			printf("Iniciando execucao do simulador...\n");
-    			ftotal = fopen("/tmp/ep2.mem","wb");
-    			if (ftotal != NULL)
-    				printf ("ftotal aberto com sucesso!\n");
+    			ftotalw = fopen("/tmp/ep2.mem","wb");
+    			if (ftotalw != NULL)
+    				printf ("ftotalw aberto com sucesso!\n");
     			else {
-    				printf ("ERRO: falha ao criar o arquivo ftotal.\n");
+    				printf ("ERRO: falha ao criar o arquivo ftotalw.\n");
     				return 1;
     			}
 
-    			criabin(total, ftotal);
+    			criabin(total, ftotalw);
     			
-    			fvirtual = fopen("/tmp/ep2.vir","wb");
-    			if (fvirtual != NULL)
-    				printf ("fvirtual aberto com sucesso!\n");
+    			fvirtualw = fopen("/tmp/ep2.vir","wb");
+    			if (fvirtualw != NULL)
+    				printf ("fvirtualw aberto com sucesso!\n");
     			else {
-    				printf ("ERRO: falha ao criar o arquivo fvirtual.\n");
+    				printf ("ERRO: falha ao criar o arquivo fvirtualw.\n");
     				return 1;
     			}
 
-    			criabin(virtual, fvirtual);
+    			criabin(virtual, fvirtualw);
     			
 
     			if (fit != 0){
     				switch(fit){
     					case 1 :
     						printf("Gerencia First Fit.\n");
-    						firstFit(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
+    						firstFit(nproc, total, virtual, intv, ftotalw, fvirtualw, lista_proc);
     						break;
     					case 2 :
     						printf("Gerencia Next Fit.\n");
-    						nextFit(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
+    						nextFit(nproc, total, virtual, intv, ftotalw, fvirtualw, lista_proc);
     						break;
     					case 3 :
     						printf("Gerencia Quick Fit.\n");
-    						quickFit(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
+    						quickFit(nproc, total, virtual, intv, ftotalw, fvirtualw, lista_proc);
     						break;
     					default :
     						break;
@@ -403,19 +403,19 @@ int main() {
     				switch(pag){
     					case 1 :
     						printf("Substituicao Not Recently Used Page.\n");
-    						NRUP(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
+    						NRUP(nproc, total, virtual, intv, ftotalw, fvirtualw, lista_proc);
     						break;
     					case 2 :
     						printf("Substituicao First-In, First-Out.\n");
-    						FIFO(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
+    						FIFO(nproc, total, virtual, intv, ftotalw, fvirtualw, lista_proc);
     						break;
     					case 3 :
 		    				printf("Substituicao Second-Chance Page.\n");
-		    				SCP(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
+		    				SCP(nproc, total, virtual, intv, ftotalw, fvirtualw, lista_proc);
 		    				break;
 		    			case 4 :
 		    				printf("Substituicao Least Recently Used Page.\n");
-		    				LRUP(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
+		    				LRUP(nproc, total, virtual, intv, ftotalw, fvirtualw, lista_proc);
 		    				break;
 		    			default :
 		    				break;
@@ -435,11 +435,11 @@ int main() {
     if (argv != NULL)
     	free(argv);
 
-    if (ftotal != NULL)
-    	free(ftotal);
+    if (ftotalw != NULL)
+    	free(ftotalw);
 
-    if (fvirtual != NULL)
-    	free(fvirtual);
+    if (fvirtualw != NULL)
+    	free(fvirtualw);
 
     return 0;
 }
