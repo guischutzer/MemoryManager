@@ -19,8 +19,16 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "page.h"
 #include "io.h"
 
-/*void executa(Processo* lista_proc, int nproc, int fit, int pag){
-  int fim = FALSE;
+
+void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int virtual, int nproc, int fit, int pag, int intv){
+  Node *aux = NULL, *headtot, *headvirt;
+  struct timeval tv, inicio, fim;
+  double totime, ultime = -1;
+  int proc_fim = 0, proc_ini = 0;
+  int i;
+
+  fit = 1;
+  pag = 1;
 
   if(lista_proc == NULL) {
     printf("Carregue um arquivo para executar.\n");
@@ -40,11 +48,87 @@ Tomás Marcondes Bezerra Paim - 7157602
     return;
   }
 
-  while(fim == FALSE){
+  headtot = malloc(sizeof(Node));
+	headtot->tipo = 'L';
+	headtot->inicio = 0;
+	headtot->tamanho = total;
+	headtot->prox = NULL;
+
+	headvirt = malloc(sizeof(Node));
+	headvirt->tipo = 'L';
+	headvirt->inicio = 0;
+	headvirt->tamanho = virtual;
+	headvirt->prox = NULL;
+
+  gettimeofday(&tv, NULL);
+  inicio = tv;
+
+  while(proc_fim < nproc){ /* enquanto o numero de processos terminados for menor do que o numero de processos */
+    gettimeofday(&tv, NULL);
+    fim = tv;
+
+		totime = (double) fim.tv_sec + fim.tv_usec/10e6 - (inicio.tv_sec + fim.tv_usec/10e6);
+
+    if(totime != ultime){
+			ultime = totime;
+      printf("Tempo atual: %f\n", ultime);
+      /* Checa quais processos ja terminaram */
+      for(i = 0; i < proc_ini; i++){
+        if(lista_proc[i].tf <= ultime && lista_proc[i].init >= 0){
+          proc_fim++;
+          printf("i: %d ultime: %f\n", i, ultime);
+          escreveBin(-1, fvirtual, lista_proc[i].init, lista_proc[i].b);
+
+          switch(fit){
+            case 1: /* FirstFit */
+              aux = headvirt;
+              while(aux != NULL){
+                if(aux->inicio == lista_proc[i].init){
+                  aux->tipo = 'L';
+                  break;
+                }
+                aux = aux->prox;
+              }
+              mergeNode(headvirt);
+              break;
+            case 2: /* NextFit */
+              break;
+            case 3: /* QuickFit*/
+              break;
+          }
+          lista_proc[i].init = -1;
+        }
+      }
+
+      while(lista_proc[proc_ini].t0 == ultime){
+        switch(fit){
+          case 1: /* FirstFit */
+            lista_proc[proc_ini].init = firstFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
+            break;
+            case 2: /* NextFit */
+              break;
+            case 3: /* QuickFit*/
+              break;
+        }
+
+        proc_ini++;
+      }
+      if ((int) ultime % intv == 0){
+
+          printf("Instante atual: %d\n", (int) ultime);
+          printf("Arquivo binario da memoria total: \n");
+          imprimeBin(ftotal, total*16);
+          printf("Arquivo binario da memoria virtual: \n");
+          imprimeBin(fvirtual, virtual*16);
+          printf ("\n");
+      }
+
+    }
 
   }
-
-}*/
+  printf("nproc: %d proc_fim: %d\n", nproc, proc_fim);
+  printf ("Simulacao terminada no instante %d\n", (int) ultime);
+}
 
 int main(){
   char*  input, shell_prompt[MAXCHAR];
@@ -86,7 +170,6 @@ int main(){
         printf("Não há processos.\n");
     }
   	else if (strcmp(argv[0], "espaco") == 0) {
-  		pag = 0;
   		fit = atoi(argv[1]);
   		switch(atoi(argv[1])){
   			case 1 :
@@ -105,7 +188,6 @@ int main(){
   		}
   	}
   	else if (strcmp(argv[0], "substitui") == 0) {
-  		fit = 0;
   		pag = atoi(argv[1]);
   		switch(atoi(argv[1])){
   			case 1 :
@@ -139,87 +221,37 @@ int main(){
   		if (argv[1] != NULL){
   			intv = atoi(argv[1]);
   			printf ("Intervalo definido como %d.\n", intv);
-  		}
+		  }
   		else intv = 1;
 
+			printf("Iniciando execucao do simulador...\n");
+			ftotal = fopen("/tmp/ep2.mem","wb+");
+			if (ftotal != NULL)
+				printf ("ftotal aberto com sucesso!\n");
+			else {
+				printf ("ERRO: falha ao criar o arquivo ftotal.\n");
+				return 1;
+  	  }
 
-  		if(pag==0 && fit == 0){
-  			printf("Escolha um algoritmo de gerenciamento antes de executar.\n");
-  		}
+  		escreveBin(-1, ftotal, 0, total);
 
-  		else if (total == 0 && virtual == 0) {
-  			printf ("Carregue um arquivo antes de executar.\n");
-  		}
+			fvirtual = fopen("/tmp/ep2.vir","wb+");
+			if (fvirtual != NULL)
+				printf ("fvirtual aberto com sucesso!\n");
+			else {
+				printf ("ERRO: falha ao criar o arquivo fvirtual.\n");
+				return 1;
+			}
 
-  		else {
-  			printf("Iniciando execucao do simulador...\n");
-  			ftotal = fopen("/tmp/ep2.mem","wb+");
-  			if (ftotal != NULL)
-  				printf ("ftotal aberto com sucesso!\n");
-  			else {
-  				printf ("ERRO: falha ao criar o arquivo ftotal.\n");
-  				return 1;
-  			}
-
-  			escreveBin(-1, ftotal, 0, total);
-
-  			fvirtual = fopen("/tmp/ep2.vir","wb+");
-
-  			if (fvirtual != NULL)
-  				printf ("fvirtual aberto com sucesso!\n");
-  			else {
-  				printf ("ERRO: falha ao criar o arquivo fvirtual.\n");
-  				return 1;
-  			}
-
-  			escreveBin(-1, fvirtual, 0, virtual);
-
-  			if (fit != 0){
-  				switch(fit){
-  					case 1 :
-  						printf("Gerencia First Fit.\n");
-  						/*firstFit_antigo(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);*/
-  						break;
-  					case 2 :
-  						printf("Gerencia Next Fit.\n");
-  						/*nextFit(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);*/
-  						break;
-  					case 3 :
-  						printf("Gerencia Quick Fit.\n");
-  						/*quickFit(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);*/
-  						break;
-  					default :
-  						break;
-  				}
-  			}
-  			else {
-  				switch(pag){
-  					case 1 :
-  						printf("Substituicao Not Recently Used Page.\n");
-  						NRUP(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
-  						break;
-  					case 2 :
-  						printf("Substituicao First-In, First-Out.\n");
-  						FIFO(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
-  						break;
-  					case 3 :
-	    				printf("Substituicao Second-Chance Page.\n");
-	    				SCP(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
-	    				break;
-	    			case 4 :
-	    				printf("Substituicao Least Recently Used Page.\n");
-	    				LRUP(nproc, total, virtual, intv, ftotal, fvirtual, lista_proc);
-	    				break;
-	    			default :
-	    				break;
-  				}
-  			}
-  		}
+			escreveBin(-1, fvirtual, 0, virtual);
+      executa(lista_proc, ftotal, fvirtual, total, virtual, nproc, fit, pag, intv);
   	}
+
   	else if (strcmp(argv[0], "sai") == 0) {
   		printf("Adeus.\n");
   		break;
   	}
+
 		else {
 			printf("Lista de comandos:\n");
 			printf("carrega <nome>    -- carrega um arquivo de entrada\n");

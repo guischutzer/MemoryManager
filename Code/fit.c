@@ -31,11 +31,12 @@ void mergeNode(Node* head){
 	return;
 }
 
+
+
 int firstFit(FILE* arquivo, int pid, int tamanho, Node *lista){
 
 	Node *newNode, *aux;
 	int encontrou = FALSE;
-	int origem;
 
 	aux = lista;
 
@@ -43,7 +44,7 @@ int firstFit(FILE* arquivo, int pid, int tamanho, Node *lista){
 		if ((aux->tipo == 'L') && (aux->tamanho >= tamanho)){
 			encontrou = TRUE;
 			newNode = NULL;
-			origem = aux->inicio;
+
 			if (aux->tamanho > tamanho){
 				newNode = malloc(sizeof(Node)); /* cria um novo no caso tenha sobrado memoria livre no no atual */
 				newNode->tipo = 'L';

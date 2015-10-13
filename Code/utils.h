@@ -30,6 +30,7 @@ struct processo
   int     t0;
   int     tf;
   int     b;
+  int     init;
   Acesso* head;
 };
 

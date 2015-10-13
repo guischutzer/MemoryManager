@@ -26,14 +26,17 @@ void imprimeNode(Node* head) {
 }
 
 void imprimeBin(FILE* arquivo, int tamanho) {
-	int i;
+	int i, pag = 0;
 	char c;
 	for (i = 1; i <= tamanho; i++) {
-			fseek(arquivo, sizeof(char)*i,SEEK_SET);
+			fseek(arquivo, sizeof(char)*i-1,SEEK_SET);
 			fread(&c, sizeof(char), 1, arquivo);
+			if(i%16 == 1){
+				printf("pag %02d:  [", pag++);
+			}
 			printf("%4d", c);
       if (i%16 == 0)
-        printf("\n");
+        printf("   ]\n");
 	}
 	printf ("\n");
 }
@@ -41,15 +44,11 @@ void imprimeBin(FILE* arquivo, int tamanho) {
 void escreveBin(char pid, FILE* arquivo, int origem, int pags){
 	int i;
 
-	printf("pid = %d\n", pid);
-	printf("origem = %d, pags = %d\n", origem, pags);
 
-	fseek(arquivo, (sizeof(char)*origem*16)+1, SEEK_SET);
+	fseek(arquivo, sizeof(char)*origem*16, SEEK_SET);
 
-	for(i = 0; i < pags*16; i++){
+	for(i = 0; i < pags*16; i++)
 		fwrite(&pid, sizeof(pid), 1, arquivo);
-	}
-	printf("i = %d\n", i);
 }
 
 Processo inputProcesso(char* linha) {
@@ -64,6 +63,7 @@ Processo inputProcesso(char* linha) {
   p.t0    = atoi(tokens[0]);
   p.tf    = atoi(tokens[2]);
   p.b     = atoi(tokens[3])/16;
+  p.init  = -1;
   if(atoi(tokens[3]) % 16 != 0)
     p.b++;
 
