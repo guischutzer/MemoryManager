@@ -135,13 +135,8 @@ int main() {
     			}
 
     			criabin(total, ftotal);
-<<<<<<< HEAD
-    			
-    			fvirtual = fopen("/tmp/ep2.vir","wb+");
-=======
 
-    			fvirtual = fopen("/tmp/ep2.vir","wb");
->>>>>>> ac1719d222922fbfd092b154391a74be3ecfcab3
+    			fvirtual = fopen("/tmp/ep2.vir","wb+");
     			if (fvirtual != NULL)
     				printf ("fvirtual aberto com sucesso!\n");
     			else {
