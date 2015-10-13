@@ -1,8 +1,5 @@
 
 
-#ifndef _IO_H
-#define _IO_H
-
 void imprimeBin(FILE* arquivo, int arqsize);
 
 Processo inputProcesso(char* linha);
@@ -18,5 +15,3 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc);
 void liberaListaAcessos(Acesso *head);
 
 void liberaListaProcessos(Processo *lista_proc, int tamanho);
-
-#endif

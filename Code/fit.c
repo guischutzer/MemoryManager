@@ -8,6 +8,7 @@ Tomás Marcondes Bezerra Paim - 7157602
 
 */
 
+#define LIVRE NULL
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,14 +21,14 @@ Tomás Marcondes Bezerra Paim - 7157602
 
 void mergeNode(Node* head){
 	Node* aux = NULL;
-	Node* livrer = NULL;
+	Node* morta = NULL;
 	aux = head;
 	while (aux != NULL){
-		while ((aux->tipo == NULL) && (aux->prox != NULL) && (aux->prox->tipo == NULL)){
+		while ((aux->tipo == LIVRE) && (aux->prox != NULL) && (aux->prox->tipo == LIVRE)){
 			aux->tamanho = (aux->tamanho + aux->prox->tamanho);
-			livrer = aux->prox;
+			morta = aux->prox;
 			aux->prox = aux->prox->prox;
-			free(livrer);
+			free(morta);
 		}
 		aux = aux->prox;
 	}
@@ -35,26 +36,25 @@ void mergeNode(Node* head){
 
 
 void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
-	Node *headtot, *headvirt, *aux, *aux2, *newNode;
+	Node *headtot, *headvirt, *aux, *newNode;
 	struct timeval tv, inicio, fim;
-	double totime, ultime = -1, espera, tf;
-	int i = 0, procfim = 0, encontrou = 0, tatual = -1, pos = 0;
+	double totime, ultime = -1;
+	int i = 0, procfim = 0, encontrou = 0, pos = 0;
 	char escreve;
 
 	headtot = NULL;
 	headvirt = NULL;
 	aux = NULL;
-	aux2 = NULL;
 	newNode = NULL;
 
 	headtot = malloc(sizeof(Node));
-	headtot->tipo = NULL;
+	headtot->tipo = LIVRE;
 	headtot->inicio = 0;
 	headtot->tamanho = total;
 	headtot->prox = NULL;
 
 	headvirt = malloc(sizeof(Node));
-	headvirt->tipo = NULL;
+	headvirt->tipo = LIVRE;
 	headvirt->inicio = 0;
 	headvirt->tamanho = virtual;
 	headvirt->prox = NULL;
@@ -69,16 +69,12 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 
 		if(totime != ultime){
 			ultime = totime;
-			tatual = ultime;
-
-			printf("\ntotal = %f\n", totime);
-			printf ("tatual = %d, intv = %d\n", tatual, intv);
 
 			/* checa se algum processo da memoria fisica terminou para tira-lo da memoria */
 			aux = headtot;
 			while(aux != NULL){
-				if ((aux->tipo != NULL) && (aux->tipo->tf <= ultime)){
-					aux->tipo = NULL; 	/* simplesmente dizemos que a memoria agora esta livre */
+				if ((aux->tipo != LIVRE) && (aux->tipo->tf <= ultime)){
+					aux->tipo = LIVRE; 	/* simplesmente dizemos que a memoria agora esta livre */
 					procfim++;			/* incrementamos o contador de processos terminados */
 					/* codigo que volta o arquivo binario correspondente para -1 */
 					fseek(ftotal, aux->inicio, SEEK_SET);
@@ -93,8 +89,8 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 			/* checa se algum processo da memoria virtual terminou para tira-lo da memoria */
 			aux = headvirt;
 			while(aux != NULL){
-				if ((aux->tipo != NULL) && (aux->tipo->tf <= ultime)){
-					aux->tipo = NULL; 	/* simplesmente dizemos que a memoria agora esta livre */
+				if ((aux->tipo != LIVRE) && (aux->tipo->tf <= ultime)){
+					aux->tipo = LIVRE; 	/* simplesmente dizemos que a memoria agora esta livre */
 					procfim++;			/* incrementamos o contador de processos terminados */
 					/* codigo que volta o arquivo binario correspondente para -1 */
 					fseek(fvirtual, aux->inicio, SEEK_SET);
@@ -105,29 +101,23 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 				aux = aux->prox;
 			}
 			/* agora devemos checar se algum processo esta previsto para comecar no instante atual */
-			/* printf("Impressao de headtot:\n");
-			imprimeNode(headtot); */
-			mergeNode(headtot);
-			/* printf("Impressão de headtot apos merge:\n");
-			imprimeNode(headtot); */
 
-			/* printf("\nImpressao de headvirt:\n");
-			imprimeNode(headvirt); */
+			mergeNode(headtot);
+
 			mergeNode(headvirt);
-			/* printf("Impressão de headvirt apos merge:\n");
-			imprimeNode(headvirt); */
+
 
 			/* checar os vetores para ver se algum processo precisa de memoria */
 			if (lista_proc[i].t0 == ultime){ /* assume que no maximo um processo vai entrar a cada instante */
 				aux = headtot;
 				encontrou = 0;
 				while (aux != NULL){
-					if ((aux->tipo == NULL) && (aux->tamanho >= lista_proc[i].b)){
+					if ((aux->tipo == LIVRE) && (aux->tamanho >= lista_proc[i].b)){
 						encontrou = 1;
 						newNode = NULL;
 						if (aux->tamanho > lista_proc[i].b){
 							newNode = malloc(sizeof(Node)); /* cria um novo no caso tenha sobrado memoria livre no no atual */
-							newNode->tipo = NULL;
+							newNode->tipo = LIVRE;
 							newNode->prox = aux->prox;
 							newNode->inicio = (aux->inicio + lista_proc[i].b);
 							newNode->tamanho = (aux->tamanho - lista_proc[i].b);
@@ -136,7 +126,6 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 							aux->tamanho = lista_proc[i].b;
 							aux->tipo = &(lista_proc[i]);
 
-							mergeNode(headtot);
 						}
 						else {
 							aux->tipo = &(lista_proc[i]);
@@ -155,12 +144,12 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 
 					aux = headvirt;
 					while (aux != NULL){
-						if ((aux->tipo == NULL) && (aux->tamanho >= lista_proc[i].b)){
+						if ((aux->tipo == LIVRE) && (aux->tamanho >= lista_proc[i].b)){
 							encontrou = 1;
 							newNode = NULL;
 							if (aux->tamanho > lista_proc[i].b){
 								newNode = malloc(sizeof(Node)); /* cria um novo no caso tenha sobrado memoria livre no no atual */
-								newNode->tipo = NULL;
+								newNode->tipo = LIVRE;
 								newNode->prox = aux->prox;
 								newNode->inicio = (aux->inicio + lista_proc[i].b);
 								newNode->tamanho = (aux->tamanho - lista_proc[i].b);
@@ -169,7 +158,6 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 								aux->tamanho = lista_proc[i].b;
 								aux->tipo = &(lista_proc[i]);
 
-								mergeNode(headvirt);
 							}
 							else {
 								aux->tipo = &(lista_proc[i]);
@@ -192,25 +180,27 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 
 			}
 
-			if (tatual % intv == 0){
-					imprimeNode(headtot);
-					imprimeNode(headvirt);
-					/*printf("Arquivo binario da memoria total: \n");
+
+			if ((int) ultime % intv == 0){
+					/* imprimeNode(headtot);
+					imprimeNode(headvirt); */
+					printf("Instante atual: %d\n", (int) ultime);
+					printf("Arquivo binario da memoria total: \n");
 					imprimeBin(ftotal, total);
 					printf("Arquivo binario da memoria virtual: \n");
-					imprimeBin(fvirtual, virtual);*/
+					imprimeBin(fvirtual, virtual);
+					printf ("\n");
 				}
 
-
-		/* if(totime == 1)
-			break; */
 		}
+
 	}
+	printf ("Simulacao terminada no instante %d\n", tatual);
 
 }
 
 void nextFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
-
+	return;
 }
 
 void quickFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
