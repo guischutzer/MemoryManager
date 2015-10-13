@@ -139,19 +139,13 @@ void liberaListaAcessos(Acesso *head){
   Acesso *morta = NULL;
 
   morta = head;
-<<<<<<< HEAD
-  
-=======
-  printf("Oi.");
->>>>>>> ac1719d222922fbfd092b154391a74be3ecfcab3
+
   while(head != NULL){
     head = head->prox;
 
-    printf("Morta.");
     free(morta);
     morta = NULL;
   }
-  printf("\n");
 }
 
 void liberaListaProcessos(Processo* lista_proc, int tamanho){
@@ -159,8 +153,6 @@ void liberaListaProcessos(Processo* lista_proc, int tamanho){
 
   for(i = 0; i < tamanho; i++)
     liberaListaAcessos(lista_proc[i].head);
-
-  printf("liberando lista...\n");
   free(lista_proc);
   lista_proc = NULL;
 }
