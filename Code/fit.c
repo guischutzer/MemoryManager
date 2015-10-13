@@ -45,7 +45,7 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 	headvirt = NULL;
 	aux = NULL;
 	newNode = NULL;
-
+	
 	headtot = malloc(sizeof(Node));
 	headtot->tipo = NULL;
 	headtot->inicio = 0;
@@ -69,9 +69,6 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 		if(totime != ultime){
 			ultime = totime;
 			tatual = ultime;
-
-			printf("\ntotal = %f\n", totime);
-			printf ("tatual = %d, intv = %d\n", tatual, intv);
 
 			/* checa se algum processo da memoria fisica terminou para tira-lo da memoria */
 			aux = headtot;
@@ -152,7 +149,7 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 				}
 				if (encontrou == 0){
 
-					aux = headvirt;
+					aux = headvirt;	
 					while (aux != NULL){
 						if ((aux->tipo == NULL) && (aux->tamanho >= lista_proc[i].b)){
 							encontrou = 1;
@@ -183,30 +180,30 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 							break;
 						else
 							aux = aux->prox;
-					}
+					}	
 				}
 				if (encontrou == 0)
 					printf("ERRO: Memoria insuficiente.\n");
 				i++;
-
+				
 			}
 
 			if (tatual % intv == 0){
-					imprimeNode(headtot);
-					imprimeNode(headvirt);
-					/*printf("Arquivo binario da memoria total: \n");
+					/* imprimeNode(headtot);
+					imprimeNode(headvirt); */
+					printf("Instante atual: %d\n", tatual);
+					printf("Arquivo binario da memoria total: \n");
 					imprimeBin(ftotal, total);
 					printf("Arquivo binario da memoria virtual: \n");
-					imprimeBin(fvirtual, virtual);*/
+					imprimeBin(fvirtual, virtual);
+					printf ("\n");
 				}
 
 
 		/* if(totime == 1)
 			break; */
-		}
+		} 
 	}
-
-}
 
 void nextFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
 

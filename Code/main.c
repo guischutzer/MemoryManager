@@ -126,7 +126,7 @@ int main() {
 
     		else {
     			printf("Iniciando execucao do simulador...\n");
-    			ftotal = fopen("/tmp/ep2.mem","wb");
+    			ftotal = fopen("/tmp/ep2.mem","wb+");
     			if (ftotal != NULL)
     				printf ("ftotal aberto com sucesso!\n");
     			else {
@@ -135,8 +135,13 @@ int main() {
     			}
 
     			criabin(total, ftotal);
+<<<<<<< HEAD
+    			
+    			fvirtual = fopen("/tmp/ep2.vir","wb+");
+=======
 
     			fvirtual = fopen("/tmp/ep2.vir","wb");
+>>>>>>> ac1719d222922fbfd092b154391a74be3ecfcab3
     			if (fvirtual != NULL)
     				printf ("fvirtual aberto com sucesso!\n");
     			else {

@@ -38,7 +38,7 @@ void imprimeBin(FILE* arquivo, int tamanho) {
 	for (i = 0; i < tamanho; i++) {
 			fseek(arquivo, sizeof(char)*i,SEEK_SET);
 			fread(&c, sizeof(char), 1, arquivo);
-			printf("%d ", c);
+			printf("%4d", c);
 		}
 		printf ("\n");
 }
@@ -139,7 +139,11 @@ void liberaListaAcessos(Acesso *head){
   Acesso *morta = NULL;
 
   morta = head;
+<<<<<<< HEAD
+  
+=======
   printf("Oi.");
+>>>>>>> ac1719d222922fbfd092b154391a74be3ecfcab3
   while(head != NULL){
     head = head->prox;
 
