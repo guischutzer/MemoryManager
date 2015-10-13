@@ -132,9 +132,6 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
 
   fclose(a);
 
-/*  for (i = 0; i < nproc; i++)
-    imprimeProc(*lista_proc[i]); */
-
   return lista_proc;
 }
 
@@ -142,13 +139,19 @@ void liberaListaAcessos(Acesso *head){
   Acesso *morta = NULL;
 
   morta = head;
+<<<<<<< HEAD
   
+=======
+  printf("Oi.");
+>>>>>>> ac1719d222922fbfd092b154391a74be3ecfcab3
   while(head != NULL){
     head = head->prox;
 
+    printf("Morta.");
     free(morta);
     morta = NULL;
   }
+  printf("\n");
 }
 
 void liberaListaProcessos(Processo* lista_proc, int tamanho){
