@@ -13,14 +13,35 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "utils.h"
 #include "io.h"
 
-void criabin(int t, FILE *arquivo)
-  {
+void criabin(int t, FILE *arquivo) {
     int i;
     char c = -1;
-    for (i = 0; i < t; i++){
+    for (i = 0; i < t; i++)
       fwrite(&c, sizeof(char), 1, arquivo);
-    }
-  }
+}
+
+void imprimeNode(Node* head) {
+	Node* aux = NULL;
+	aux = head;
+	while (aux != NULL){
+		if (aux->tipo == NULL)
+			printf ("Memoria livre de tamanho ");
+		else printf ("Processo %s ocupando memoria de tamanho ", aux->tipo->nome);
+		printf ("%d com inicio em %d.\n", aux->tamanho, aux->inicio);
+		aux = aux->prox;
+	}
+}
+
+void imprimeBin(FILE* arquivo, int tamanho) {
+	int i;
+	char c;
+	for (i = 0; i < tamanho; i++) {
+			fseek(arquivo, sizeof(char)*i,SEEK_SET);
+			fread(&c, sizeof(char), 1, arquivo);
+			printf("%4d", c);
+		}
+		printf ("\n");
+}
 
 Processo inputProcesso(char* linha) {
   int       i;
@@ -80,12 +101,12 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
   a = fopen(nome, "r");
   if (a == NULL){
     printf("ERRO: arquivo %s não encontrado.\n", nome);
-    exit;
+    return NULL;
   }
   b = fopen(nome, "r");
   if (b == NULL){
     printf("ERRO: arquivo %s não encontrado.\n", nome);
-    exit;
+    return NULL;
   }
 
   fgets(linha, MAXCHAR, a);
@@ -98,7 +119,7 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
 
   for(nprocloc = 0; fgets(linha, MAXCHAR, a); nprocloc++)
     printf("nproc = %d.\n", nprocloc);
-  
+
   lista_proc = malloc(nprocloc * sizeof(Processo));
   if(lista_proc == NULL)
     printf("Falha ao alocar lista_proc.\n");
@@ -121,6 +142,7 @@ void liberaListaAcessos(Acesso *head){
   Acesso *morta = NULL;
 
   morta = head;
+  
   while(head != NULL){
     head = head->prox;
 
@@ -135,6 +157,7 @@ void liberaListaProcessos(Processo* lista_proc, int tamanho){
   for(i = 0; i < tamanho; i++)
     liberaListaAcessos(lista_proc[i].head);
 
+  printf("liberando lista...\n");
   free(lista_proc);
   lista_proc = NULL;
 }

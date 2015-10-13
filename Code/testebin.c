@@ -4,13 +4,15 @@
 
 	void imprimeBin(FILE* arquivo, int arqsize){
 	int i;
-	char *c = NULL;
+	char c[1];
+
+	c[0] = 5;
 	
-	for (i = 1; i <= arqsize; i++)
+	for (i = 0; i < arqsize; i++)
 		{
-			fseek(arquivo, sizeof(char)*i+1, SEEK_SET);
-			fread(c, 1, 1, arquivo);
-			printf("%d ", *c);
+			fseek(arquivo, sizeof(char)*i, SEEK_SET);
+			fread(c, 1, sizeof(c), arquivo);
+			printf("%d ", c[0]);
 		}
 		printf ("\n");
 }
@@ -32,9 +34,11 @@
 	{
 		FILE *ptr_myfile, *ptr_read;
 		int counter;
-		char *c = NULL;
+		char c[1];
 
-		ptr_myfile=fopen("test.bin","wb");
+		c[0] = 7;
+
+		ptr_myfile=fopen("test.bin","wb+");
 		if (!ptr_myfile)
 		{
 			printf("Unable to open file!");
@@ -43,22 +47,21 @@
 		
 		criabin(30, ptr_myfile);
 
-		ptr_read=fopen("test.bin","rb");
 		
-		imprimeBin(ptr_read, 30);
+		imprimeBin(ptr_myfile, 30);
 
-		fseek(ptr_read, sizeof(char), SEEK_SET);
-		fread(c, 1, sizeof(char), ptr_read);
-		printf("%d ", *c);
-		fseek(ptr_read, sizeof(char)*2, SEEK_SET);
-		fread(c, 1, sizeof(char), ptr_read);
-		printf("%d ", *c);
+		/* fseek(ptr_read, sizeof(char), SEEK_SET); */
+		fread(c, 1, sizeof(c), ptr_myfile);
+		printf("%d ", c[0]);
+		/* fseek(ptr_read, sizeof(char)*2, SEEK_SET);*/
+		fread(c, 1, sizeof(c), ptr_myfile);
+		printf("%d ", c[0]);
 		printf("\n");
 
 		for ( counter=1; counter <= 30; counter++)
 		{
-			fread(&c, sizeof(char), 1, ptr_myfile);
-			printf("%d ", *c);
+			fread(c, sizeof(c), 1, ptr_myfile);
+			printf("%d ", c[0]);
 		}
 		printf("\n");
 

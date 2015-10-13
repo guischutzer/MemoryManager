@@ -18,7 +18,7 @@ io.o: io.h io.c utils.h
 	$(CC) -c io.c $(CFLAGS)
 
 utils.o: utils.h utils.c
-	$(CC) -c utils.c $(CFLAGS) 
+	$(CC) -c utils.c $(CFLAGS)
 
 clean:
 	mkdir -p ../bin
