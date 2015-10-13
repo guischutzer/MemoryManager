@@ -132,9 +132,6 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
 
   fclose(a);
 
-/*  for (i = 0; i < nproc; i++)
-    imprimeProc(*lista_proc[i]); */
-
   return lista_proc;
 }
 
