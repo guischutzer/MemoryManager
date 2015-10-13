@@ -101,17 +101,11 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 				aux = aux->prox;
 			}
 			/* agora devemos checar se algum processo esta previsto para comecar no instante atual */
-			/* printf("Impressao de headtot:\n");
-			imprimeNode(headtot); */
-			mergeNode(headtot);
-			/* printf("Impressão de headtot apos merge:\n");
-			imprimeNode(headtot); */
 
-			/* printf("\nImpressao de headvirt:\n");
-			imprimeNode(headvirt); */
+			mergeNode(headtot);
+
 			mergeNode(headvirt);
-			/* printf("Impressão de headvirt apos merge:\n");
-			imprimeNode(headvirt); */
+
 
 			/* checar os vetores para ver se algum processo precisa de memoria */
 			if (lista_proc[i].t0 == ultime){ /* assume que no maximo um processo vai entrar a cada instante */
@@ -132,7 +126,6 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 							aux->tamanho = lista_proc[i].b;
 							aux->tipo = &(lista_proc[i]);
 
-							mergeNode(headtot);
 						}
 						else {
 							aux->tipo = &(lista_proc[i]);
@@ -165,7 +158,6 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 								aux->tamanho = lista_proc[i].b;
 								aux->tipo = &(lista_proc[i]);
 
-								mergeNode(headvirt);
 							}
 							else {
 								aux->tipo = &(lista_proc[i]);
@@ -188,6 +180,7 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 
 			}
 
+
 			if ((int) ultime % intv == 0){
 					/* imprimeNode(headtot);
 					imprimeNode(headvirt); */
@@ -198,12 +191,11 @@ void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *f
 					imprimeBin(fvirtual, virtual);
 					printf ("\n");
 				}
-
-
-		/* if(totime == 1)
-			break; */
 		}
+
 	}
+	printf ("Simulacao terminada no instante %d\n", tatual);
+>>>>>>> 22a73948ff4428d7d50e07bb3d197b09fecea528
 }
 
 void nextFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){

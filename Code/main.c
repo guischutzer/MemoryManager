@@ -137,6 +137,7 @@ int main() {
     			criabin(total, ftotal);
 
     			fvirtual = fopen("/tmp/ep2.vir","wb+");
+
     			if (fvirtual != NULL)
     				printf ("fvirtual aberto com sucesso!\n");
     			else {
