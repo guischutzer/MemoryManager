@@ -145,6 +145,7 @@ int main() {
     				return 1;
     			}
 
+          criabin(virtual, fvirtual);
 
     			if (fit != 0){
     				switch(fit){
