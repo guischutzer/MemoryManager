@@ -8,220 +8,16 @@ Tomás Marcondes Bezerra Paim - 7157602
 
 */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <sys/time.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "utils.h"
+#include "fit.h"
+#include "page.h"
 #include "io.h"
-
-void imprimeNode(Node* head){
-	Node* aux = NULL;
-	aux = head;
-	while (aux != NULL){
-		if (aux->tipo == NULL)
-			printf ("Memoria livre de tamanho ");
-		else printf ("Processo %s ocupando memoria de tamanho ", aux->tipo->nome);
-		printf ("%d com inicio em %d.\n", aux->tamanho, aux->inicio);
-		aux = aux->prox;
-	}
-}
-
-void mergeNode(Node* head){
-	Node* aux = NULL;
-	Node* livrer = NULL;
-	aux = head;
-	while (aux != NULL){
-		while ((aux->tipo == NULL) && (aux->prox != NULL) && (aux->prox->tipo == NULL)){
-			aux->tamanho = (aux->tamanho + aux->prox->tamanho);
-			livrer = aux->prox;
-			aux->prox = aux->prox->prox;
-			free(livrer);
-		}
-		aux = aux->prox;
-	}
-}
-
-
-void firstFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
-	Node *headtot, *headvirt, *aux, *aux2, *newNode;
-	struct timeval tv, inicio, fim;
-	double totime, ultime = -1, espera, tf;
-	int i = 0, procfim = 0, encontrou = 0, tatual = -1;
-
-	headtot = NULL;
-	headvirt = NULL;
-	aux = NULL;
-	aux2 = NULL;
-	newNode = NULL;
-	
-	headtot = malloc(sizeof(Node));
-	headtot->tipo = NULL;
-	headtot->inicio = 0;
-	headtot->tamanho = total;
-	headtot->prox = NULL;
-
-	headvirt = malloc(sizeof(Node));
-	headvirt->tipo = NULL;
-	headvirt->inicio = 0;
-	headvirt->tamanho = virtual;
-	headvirt->prox = NULL;
-
-	gettimeofday(&tv, NULL);
-	inicio = tv;
-
-	while(procfim < nproc){ 	/* enquanto o numero de processos terminados for menor do que o numero de processos */
-		gettimeofday(&tv, NULL);
-		fim = tv;
-		totime = (double) fim.tv_sec + fim.tv_usec/10e6 - (inicio.tv_sec + fim.tv_usec/10e6);
-
-		if(totime != ultime){
-			ultime = totime;
-			tatual = ultime;
-
-			printf("\ntotal = %f\n", totime);
-			printf ("tatual = %d, intv = %d\n", tatual, intv);
-
-			/* checa se algum processo da memoria fisica terminou para tira-lo da memoria */
-			aux = headtot;
-			while(aux != NULL){
-				if ((aux->tipo != NULL) && (aux->tipo->tf <= ultime)){
-					aux->tipo = NULL; 	/* simplesmente dizemos que a memoria agora esta livre */
-					procfim++;			/* incrementamos o contador de processos terminados */
-					/* codigo que volta o arquivo binario correspondente para -1 */
-				}
-				aux = aux->prox;
-			}
-
-			/* checa se algum processo da memoria virtual terminou para tira-lo da memoria */
-			aux = headvirt;
-			while(aux != NULL){
-				if ((aux->tipo != NULL) && (aux->tipo->tf <= ultime)){
-					aux->tipo = NULL; 	/* simplesmente dizemos que a memoria agora esta livre */
-					procfim++;			/* incrementamos o contador de processos terminados */
-					/* codigo que volta o arquivo binario correspondente para -1 */
-				}
-				aux = aux->prox;
-			}
-			/* agora devemos checar se algum processo esta previsto para comecar no instante atual */
-			/* printf("Impressao de headtot:\n");
-			imprimeNode(headtot); */
-			mergeNode(headtot);
-			/* printf("Impressão de headtot apos merge:\n");
-			imprimeNode(headtot); */
-
-			/* printf("\nImpressao de headvirt:\n");
-			imprimeNode(headvirt); */
-			mergeNode(headvirt);
-			/* printf("Impressão de headvirt apos merge:\n");
-			imprimeNode(headvirt); */
-
-			/* checar os vetores para ver se algum processo precisa de memoria */
-			if (lista_proc[i].t0 == ultime){ /* assume que no maximo um processo vai entrar a cada instante */
-				aux = headtot;
-				encontrou = 0;
-				while (aux != NULL){
-					if ((aux->tipo == NULL) && (aux->tamanho >= lista_proc[i].b)){
-						encontrou = 1;
-						newNode = NULL;
-						if (aux->tamanho > lista_proc[i].b){
-							newNode = malloc(sizeof(Node)); /* cria um novo no caso tenha sobrado memoria livre no no atual */
-							newNode->tipo = NULL;
-							newNode->prox = aux->prox;
-							newNode->inicio = (aux->inicio + lista_proc[i].b);
-							newNode->tamanho = (aux->tamanho - lista_proc[i].b);
-
-							aux->prox = newNode;
-							aux->tamanho = lista_proc[i].b;
-							aux->tipo = &(lista_proc[i]);
-
-							mergeNode(headtot);
-						}
-						else {
-							aux->tipo = &(lista_proc[i]);
-						}
-						/* escreve os bits no arquivo de memoria */
-					}
-					if (encontrou == 1)
-						break;
-					else
-						aux = aux->prox;
-				}
-				if (encontrou == 0){
-
-					aux = headvirt;	
-					while (aux != NULL){
-						if ((aux->tipo == NULL) && (aux->tamanho >= lista_proc[i].b)){
-							encontrou = 1;
-							newNode = NULL;
-							if (aux->tamanho > lista_proc[i].b){
-								newNode = malloc(sizeof(Node)); /* cria um novo no caso tenha sobrado memoria livre no no atual */
-								newNode->tipo = NULL;
-								newNode->prox = aux->prox;
-								newNode->inicio = (aux->inicio + lista_proc[i].b);
-								newNode->tamanho = (aux->tamanho - lista_proc[i].b);
-
-								aux->prox = newNode;
-								aux->tamanho = lista_proc[i].b;
-								aux->tipo = &(lista_proc[i]);
-
-								mergeNode(headvirt);
-							}
-							else {
-								aux->tipo = &(lista_proc[i]);
-							}
-							/* escreve os bits no arquivo de memoria */
-						}
-						if (encontrou == 1)
-							break;
-						else
-							aux = aux->prox;
-					}	
-				}
-				if (encontrou == 0)
-					printf("ERRO: Memoria insuficiente.\n");
-				i++;
-				
-			}
-
-			if (tatual % intv == 0){
-					imprimeNode(headtot);
-					imprimeNode(headvirt);
-				}
-
-
-		/* if(totime == 1)
-			break; */
-		} 
-	}
-
-}
-
-void nextFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
-
-}
-
-void quickFit(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
-
-}
-
-void NRUP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
-
-}
-
-void FIFO(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
-
-}
-
-void SCP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
-
-}
-
-void LRUP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
-
-}
 
 
 int main() {
@@ -320,7 +116,7 @@ int main() {
     		if(pag==0 && fit == 0){
     			printf("Escolha um algoritmo de gerenciamento antes de executar.\n");
     		}
-    		
+
     		else if (total == 0 && virtual == 0) {
     			printf ("Carregue um arquivo antes de executar.\n");
     		}
@@ -336,7 +132,7 @@ int main() {
     			}
 
     			criabin(total, ftotal);
-    			
+
     			fvirtual = fopen("/tmp/ep2.vir","wb");
     			if (fvirtual != NULL)
     				printf ("fvirtual aberto com sucesso!\n");
@@ -346,7 +142,6 @@ int main() {
     			}
 
     			criabin(virtual, fvirtual);
-    			
 
     			if (fit != 0){
     				switch(fit){
@@ -387,13 +182,22 @@ int main() {
 		    			default :
 		    				break;
     				}
-    			}	
+    			}
     		}
     	}
     	else if (strcmp(argv[0], "sai") == 0) {
     		printf("Adeus.\n");
     		break;
     	}
+			else {
+				printf("Lista de comandos:\n");
+				printf("carrega <nome>    -- carrega um arquivo de entrada\n");
+				printf("espaco <1-3>      -- escolhe entre os métodos FirstFit, NextFit e QuickFit\n");
+				printf("substitui <1-4>   -- escolhe entre os métodos com substiuição de página: FIFO, NRUP, SCUP, LRUP\n");
+				printf("imprime           -- imprime a lista de processos\n");
+				printf("executa <inteiro> -- executa o método selecionado com a entrada carregada; opcional: número de segundos para imprimir o estado dos arquivos (default = 1)\n");
+				printf("sai               -- encerra o programa\n");
+			}
     }
 
     if(lista_proc != NULL)
