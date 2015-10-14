@@ -22,15 +22,16 @@ Tomás Marcondes Bezerra Paim - 7157602
 
 
 void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int virtual, int nproc, int fit, int pag, int intv){
-  Node *aux = NULL, *headtot, *headvirt;
+  Node *aux = NULL, *headtot, *headvirt, **headquick;
   struct timeval tv, inicio, fim;
   double totime, ultime = -1;
   int proc_fim = 0, proc_ini = 0;
   int i;
 
-  fit = 2;
+  fit = 3;
   pag = 1;
   nextNode = NULL;
+  headquick = NULL;
 
   if(lista_proc == NULL) {
     printf("Carregue um arquivo para executar.\n");
@@ -50,17 +51,22 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     return;
   }
 
-  headtot = malloc(sizeof(Node));
+if (fit != 3){
+    /* headtot = malloc(sizeof(Node));
 	headtot->tipo = 'L';
 	headtot->inicio = 0;
 	headtot->tamanho = total;
-	headtot->prox = NULL;
+	headtot->prox = NULL; */
 
 	headvirt = malloc(sizeof(Node));
 	headvirt->tipo = 'L';
 	headvirt->inicio = 0;
 	headvirt->tamanho = virtual;
 	headvirt->prox = NULL;
+}
+else {
+	/* headquick = malloc((virtual/16)*sizeof(Node*)); */
+}
 
   gettimeofday(&tv, NULL);
   inicio = tv;
