@@ -55,6 +55,7 @@ int firstFit(FILE* arquivo, int pid, int tamanho, Node *lista){
 				newNode->prox = aux->prox;
 				newNode->inicio = (aux->inicio + tamanho);
 				newNode->tamanho = (aux->tamanho - tamanho);
+				newNode->quickprox = NULL;
 
 				aux->prox = newNode;
 				aux->tamanho = tamanho;
@@ -100,6 +101,7 @@ int nextFit(FILE* arquivo, int pid, int tamanho, Node *lista){
 				newNode->prox = aux->prox;
 				newNode->inicio = (aux->inicio + tamanho);
 				newNode->tamanho = (aux->tamanho - tamanho);
+				newNode->quickprox = NULL;
 
 				aux->prox = newNode;
 				aux->tamanho = tamanho;
@@ -132,6 +134,45 @@ int nextFit(FILE* arquivo, int pid, int tamanho, Node *lista){
 	return aux->inicio;
 }
 
-int quickFit(FILE* arquivo, int pid, int tamanho, Node* lista){
-	return 0;
+int quickFit(FILE* arquivo, int pid, int tamanho, Node **lista, int tam_max){
+	Node *newNode, *aux;
+	int encontrou = FALSE, i;
+
+	i = tamanho-1;
+
+	aux = lista[i];
+
+	/* procura por um espaco com tamanho suficiente para o processo */
+	while (aux == NULL){
+		i++;
+		if (i == tam_max){
+			printf("ERRO: Memoria insuficiente.\n");
+			return -1;
+		}
+		aux = lista[i];
+	}
+
+	lista[i] = lista[i]->quickprox;
+	if (aux->tamanho > tamanho){
+		newNode = malloc(sizeof(Node)); /* cria um novo no caso tenha sobrado memoria livre no no atual */
+		newNode->tipo = 'L';
+		newNode->prox = aux->prox;
+		newNode->inicio = (aux->inicio + tamanho);
+		newNode->tamanho = (aux->tamanho - tamanho);
+		newNode->quickprox = lista[newNode->tamanho-1];
+		lista[newNode->tamanho-1] = newNode;
+
+		aux->prox = newNode;
+		aux->tamanho = tamanho;
+		aux->tipo = 'P';
+		aux->quickprox = NULL;
+	}
+	else {
+		aux->tipo = 'P';
+		aux->quickprox = NULL;
+	}
+	
+	escreveBin(pid, arquivo, aux->inicio, tamanho);
+
+	return aux->inicio;
 }

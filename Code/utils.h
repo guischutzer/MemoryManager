@@ -41,6 +41,7 @@ struct node
   int       inicio;
   int       tamanho;
   Node*     prox;
+  Node*     quickprox;
 };
 
 

@@ -51,7 +51,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     return;
   }
 
-if (fit != 3){
+
     /* headtot = malloc(sizeof(Node));
 	headtot->tipo = 'L';
 	headtot->inicio = 0;
@@ -63,10 +63,14 @@ if (fit != 3){
 	headvirt->inicio = 0;
 	headvirt->tamanho = virtual;
 	headvirt->prox = NULL;
-}
-else {
-	/* headquick = malloc((virtual/16)*sizeof(Node*)); */
-}
+	headvirt->quickprox = NULL;
+
+	if (fit == 3) {
+		headquick = malloc((virtual)*sizeof(Node*));
+		for (i = 0; i < virtual-1; i++)
+			headquick[i] = NULL;
+		headquick[i] = headvirt;
+	}
 
   gettimeofday(&tv, NULL);
   inicio = tv;
@@ -110,6 +114,7 @@ else {
               mergeNode(headvirt);
               break;
             case 3: /* QuickFit*/
+
               break;
           }
           lista_proc[i].init = -1;
@@ -118,14 +123,15 @@ else {
 
       while(lista_proc[proc_ini].t0 == ultime){
         switch(fit){
-          case 1: /* FirstFit */
+        	case 1: /* FirstFit */
             lista_proc[proc_ini].init = firstFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
             break;
-            case 2: /* NextFit */
+		      case 2: /* NextFit */
             lista_proc[proc_ini].init = nextFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
-              break;
-            case 3: /* QuickFit*/
-              break;
+            break;
+          case 3: /* QuickFit*/
+            lista_proc[proc_ini].init = quickFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headquick, virtual);
+            break;
         }
 
         proc_ini++;
