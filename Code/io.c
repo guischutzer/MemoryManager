@@ -149,9 +149,8 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
 void liberaListaAcessos(Acesso *head){
   Acesso *morta = NULL;
 
-  morta = head;
-
   while(head != NULL){
+    morta = head;
     head = head->prox;
 
 

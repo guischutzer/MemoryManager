@@ -20,6 +20,7 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "io.h"
 
 
+
 void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int virtual, int nproc, int fit, int pag, int intv){
   Node *aux = NULL, *headtot, *headvirt;
   struct timeval tv, inicio, fim;
@@ -27,8 +28,9 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   int proc_fim = 0, proc_ini = 0;
   int i;
 
-  fit = 1;
+  fit = 2;
   pag = 1;
+  nextNode = NULL;
 
   if(lista_proc == NULL) {
     printf("Carregue um arquivo para executar.\n");
@@ -92,6 +94,15 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
               mergeNode(headvirt);
               break;
             case 2: /* NextFit */
+              aux = headvirt;
+              while(aux != NULL){
+                if(aux->inicio == lista_proc[i].init){
+                  aux->tipo = 'L';
+                  break;
+                }
+                aux = aux->prox;
+              }
+              mergeNode(headvirt);
               break;
             case 3: /* QuickFit*/
               break;
@@ -106,6 +117,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
             lista_proc[proc_ini].init = firstFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
             break;
             case 2: /* NextFit */
+            lista_proc[proc_ini].init = nextFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
               break;
             case 3: /* QuickFit*/
               break;
@@ -132,10 +144,10 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
 int main(){
   char*  input, shell_prompt[MAXCHAR];
-  char** argv;
+  char** argv = NULL;
   int pag = 0, fit = 0, nproc = 0, intv = 0;
   int total = 0, virtual = 0;
-  int i = 0;
+  int i = 0, procs = 0;
   FILE *ftotal = NULL, *fvirtual = NULL;
   Processo *lista_proc = NULL;
 
@@ -150,7 +162,7 @@ int main(){
 
   	if (strcmp(argv[0], "carrega") == 0) {
   		printf("Modo carrega.\n");
-    		if(lista_proc != NULL)
+    	if(lista_proc != NULL)
       		liberaListaProcessos(lista_proc, nproc);
 
         lista_proc = carrega(argv[1], &total, &virtual, &nproc);
@@ -160,6 +172,7 @@ int main(){
         	printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
         	return 1;
         }
+        procs = 1;
   	}
     else if (strcmp(argv[0], "imprime") == 0){
       if (lista_proc != NULL){
@@ -263,8 +276,15 @@ int main(){
 		}
   }
 
-  if(lista_proc != NULL)
+  printf("estou antes do liberalista\n");
+  
+  
+  if(procs == 1){
+  		printf("entrei no liberalista e ");
       liberaListaProcessos(lista_proc, nproc);
+      printf("sai do liberalista.\n");
+  }
+  printf("passei pelo liberalista\n");
 
   if (argv != NULL)
   	free(argv);

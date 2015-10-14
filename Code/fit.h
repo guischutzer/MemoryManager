@@ -1,3 +1,4 @@
+extern Node *nextNode;
 
 void mergeNode(Node* head);
 
