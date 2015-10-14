@@ -51,16 +51,16 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   }
 
   headtot = malloc(sizeof(Node));
-	headtot->tipo = 'L';
-	headtot->inicio = 0;
-	headtot->tamanho = total;
-	headtot->prox = NULL;
+  headtot->tipo = 'L';
+  headtot->inicio = 0;
+  headtot->tamanho = total;
+  headtot->prox = NULL;
 
-	headvirt = malloc(sizeof(Node));
-	headvirt->tipo = 'L';
-	headvirt->inicio = 0;
-	headvirt->tamanho = virtual;
-	headvirt->prox = NULL;
+  headvirt = malloc(sizeof(Node));
+  headvirt->tipo = 'L';
+  headvirt->inicio = 0;
+  headvirt->tamanho = virtual;
+  headvirt->prox = NULL;
 
   gettimeofday(&tv, NULL);
   inicio = tv;
