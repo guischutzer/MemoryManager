@@ -52,7 +52,7 @@ void NRUP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirt
 
 }
 
-void FIFO(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
+void FIFO(FILE *ftotal, Processo *lista_proc, int nquadros, int pid, int virtual){
 
 }
 

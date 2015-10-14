@@ -30,7 +30,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   int nquadros = 0;
   int i, map;
 
-
   fit = 3;
   pag = 2;
   nextNode = NULL;
