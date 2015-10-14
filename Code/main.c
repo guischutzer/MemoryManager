@@ -28,8 +28,8 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   int proc_fim = 0, proc_ini = 0;
   int i;
 
-  fit = 3;
-  pag = 1;
+  if (fit == 0) fit = 3;
+  if (pag == 0) pag = 1;
   nextNode = NULL;
   headquick = NULL;
 
@@ -87,7 +87,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
       for(i = 0; i < proc_ini; i++){
         if(lista_proc[i].tf <= ultime && lista_proc[i].init >= 0){
           proc_fim++;
-          printf("i: %d ultime: %f\n", i, ultime);
           escreveBin(-1, fvirtual, lista_proc[i].init, lista_proc[i].b);
 
           switch(fit){
@@ -100,7 +99,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                 }
                 aux = aux->prox;
               }
-              mergeNode(headvirt);
+              mergeNode(headvirt, headquick);
               break;
             case 2: /* NextFit */
               aux = headvirt;
@@ -111,10 +110,20 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                 }
                 aux = aux->prox;
               }
-              mergeNode(headvirt);
+              mergeNode(headvirt, headquick);
               break;
             case 3: /* QuickFit*/
-
+              aux = headvirt;
+              while(aux != NULL){
+                if(aux->inicio == lista_proc[i].init){
+                  aux->tipo = 'L';
+                  aux->quickprox = headquick[aux->tamanho-1];
+                  headquick[aux->tamanho-1] = aux;
+                  break;
+                }
+                aux = aux->prox;
+              }
+              mergeNode(headvirt, headquick);
               break;
           }
           lista_proc[i].init = -1;
