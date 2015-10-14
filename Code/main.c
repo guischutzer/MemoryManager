@@ -51,13 +51,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     return;
   }
 
-
-    /* headtot = malloc(sizeof(Node));
-	headtot->tipo = 'L';
-	headtot->inicio = 0;
-	headtot->tamanho = total;
-	headtot->prox = NULL; */
-
 	headvirt = malloc(sizeof(Node));
 	headvirt->tipo = 'L';
 	headvirt->inicio = 0;
@@ -182,7 +175,7 @@ int main(){
   	if (strcmp(argv[0], "carrega") == 0) {
   		printf("Modo carrega.\n");
     	if(lista_proc != NULL)
-      		liberaListaProcessos(lista_proc, nproc);
+      	liberaListaProcessos(lista_proc, nproc);
 
         lista_proc = carrega(argv[1], &total, &virtual, &nproc);
         printf("total = %d, virtual = %d.\n", total, virtual);
