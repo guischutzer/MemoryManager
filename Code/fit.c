@@ -162,7 +162,7 @@ int nextFit(FILE* arquivo, int pid, int tamanho, Node *lista){
 
 int quickFit(FILE* arquivo, int pid, int tamanho, Node **lista, int tam_max){
 	Node *newNode, *aux;
-	int encontrou = FALSE, i;
+	int i;
 
 	i = tamanho-1;
 
@@ -173,7 +173,6 @@ int quickFit(FILE* arquivo, int pid, int tamanho, Node **lista, int tam_max){
 		i++;
 		if (i == tam_max){
 			printf("ERRO: Memoria insuficiente.\n");
-			exit NULL;
 			return -1;
 		}
 		aux = lista[i];

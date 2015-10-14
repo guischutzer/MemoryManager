@@ -23,7 +23,9 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   Node *aux = NULL, *headtot, *headvirt, **headquick;
   Page *lista_pags = NULL;
   Frame *lista_frames = NULL;
-  Acesso *a;
+  Acesso *a = NULL;
+  Processo p;
+
   struct timeval tv, inicio, fim;
   double totime, ultime = -1;
   int proc_fim = 0, proc_ini = 0;
@@ -150,16 +152,18 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
               break;
           }
 
+          /* Tira as páginas e quadros dos processos que acabaram */
           for(j = 0; j < lista_proc[i].b; j++){
-            lista_pags[lista_proc[i].init + j].pid = -1;
-            lista_pags[lista_proc[i].init + j].pos = -1;
-            if(lista_pags[lista_proc[i].init + j].map != -1){
-              lista_frames[lista_pags[lista_proc[i].init + j].map].pid = -1;
-              lista_frames[lista_pags[lista_proc[i].init + j].map].R = 0;
-              lista_pags[lista_proc[i].init + j].map = -1;
+            p = lista_proc[i];
+            lista_pags[p.init + j].pid = -1;
+            lista_pags[p.init + j].pos = -1;
+            if(lista_pags[p.init + j].map != -1){
+              escreveBin(-1, ftotal, lista_pags[p.init + j].map, 1);
+              lista_frames[lista_pags[p.init + j].map].pid = -1;
+              lista_frames[lista_pags[p.init + j].map].R = 0;
+              lista_pags[p.init + j].map = -1;
             }
           }
-
           lista_proc[i].init = -1;
         }
       }
@@ -197,10 +201,11 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
             lista_proc[proc_ini].init = quickFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headquick, virtual);
             break;
         }
-        for(i = 0; i < lista_proc[proc_ini].b; i++){
-          lista_pags[lista_proc[proc_ini].init + i].pid = proc_ini;
-          lista_pags[lista_proc[proc_ini].init + i].pos = i;
-          lista_pags[lista_proc[proc_ini].init + i].map = -1;
+        p = lista_proc[proc_ini];
+        for(i = 0; i < p.b; i++){
+          lista_pags[p.init + i].pid = proc_ini;
+          lista_pags[p.init + i].pos = i;
+          lista_pags[p.init + i].map = -1;
         }
         proc_ini++;
       }

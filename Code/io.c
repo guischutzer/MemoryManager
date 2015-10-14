@@ -44,7 +44,6 @@ void imprimeBin(FILE* arquivo, int tamanho) {
 void escreveBin(char pid, FILE* arquivo, int origem, int pags){
 	int i;
 
-
 	fseek(arquivo, sizeof(char)*origem*16, SEEK_SET);
 
 	for(i = 0; i < pags*16; i++)
@@ -63,7 +62,7 @@ void imprimePags(Page* lista, int tamanho){
 
 void imprimeFrames(Frame* lista, int tamanho){
   int i;
-  printf("NO. FRA  [PID| R ]\n");
+  printf("NO. FRA  [PID|  R]\n");
   printf("------------------\n");
   for(i = 0; i < tamanho; i++){
     printf("fra %02d   [%3d|%3d]\n", i, lista[i].pid, lista[i].R);
@@ -111,14 +110,14 @@ Processo inputProcesso(char* linha) {
 }
 
 void imprimeProc (Processo proc){
-  Acesso *acc = NULL;
+  Acesso *a = NULL;
   printf("Processo %s\n", proc.nome);
   printf("Tempo de inicio e fim: %d, %d.\n", proc.t0, proc.tf);
   printf("Tamanho do processo: %d bytes.\n", proc.b);
-  acc = proc.head;
-  while(acc != NULL){
-    printf("Acesso a posicao %d no instante %d.\n", acc->pos, acc->inst);
-    acc = acc->prox;
+  a = proc.head;
+  while(a != NULL){
+    printf("Acesso a posicao %d no instante %d.\n", a->pos, a->inst);
+    a = a->prox;
   }
 }
 
