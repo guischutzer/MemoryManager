@@ -17,16 +17,42 @@ Tomás Marcondes Bezerra Paim - 7157602
 
 Node *nextNode = NULL;
 
-void mergeNode(Node* head){
+void mergeNode(Node* head, Node** headquick){
 	Node* aux = NULL;
 	Node* morta = NULL;
+	Node* auxquick = NULL;
+	Node* mortaquick = NULL;
 	aux = head;
 	while (aux != NULL){
 		while ((aux->tipo == 'L') && (aux->prox != NULL) && (aux->prox->tipo == 'L')){
+			morta = aux->prox;
+			if (headquick != NULL){
+				auxquick = headquick[aux->tamanho-1];
+				if(auxquick == aux){
+					headquick[aux->tamanho-1] = aux->quickprox;
+				}
+				else{
+					while(auxquick->quickprox != aux){
+						auxquick = auxquick->quickprox; /* percorre ate encontrar o antecessor do no que sofrera merge */
+					}
+					auxquick->quickprox = aux->quickprox;
+				}
+				mortaquick = headquick[morta->tamanho-1];
+				if(mortaquick == morta){
+					headquick[morta->tamanho-1] = morta->quickprox;
+				}
+				else{
+					while(mortaquick->quickprox != morta){
+						mortaquick = auxquick->quickprox; /* percorre ate encontrar o antecessor do no que sofrera merge */
+					}
+					mortaquick->quickprox = morta->quickprox;
+				}
+				aux->quickprox = headquick[aux->tamanho + morta->tamanho - 1];
+				headquick[aux->tamanho + morta->tamanho - 1] = aux;
+			}
 			if (nextNode == aux->prox)
 				nextNode = aux;
-			aux->tamanho = (aux->tamanho + aux->prox->tamanho);
-			morta = aux->prox;
+			aux->tamanho = (aux->tamanho + morta->tamanho);
 			aux->prox = aux->prox->prox;
 			free(morta);
 		}
@@ -55,6 +81,7 @@ int firstFit(FILE* arquivo, int pid, int tamanho, Node *lista){
 				newNode->prox = aux->prox;
 				newNode->inicio = (aux->inicio + tamanho);
 				newNode->tamanho = (aux->tamanho - tamanho);
+				newNode->quickprox = NULL;
 
 				aux->prox = newNode;
 				aux->tamanho = tamanho;
@@ -100,6 +127,7 @@ int nextFit(FILE* arquivo, int pid, int tamanho, Node *lista){
 				newNode->prox = aux->prox;
 				newNode->inicio = (aux->inicio + tamanho);
 				newNode->tamanho = (aux->tamanho - tamanho);
+				newNode->quickprox = NULL;
 
 				aux->prox = newNode;
 				aux->tamanho = tamanho;
@@ -132,6 +160,46 @@ int nextFit(FILE* arquivo, int pid, int tamanho, Node *lista){
 	return aux->inicio;
 }
 
-int quickFit(FILE* arquivo, int pid, int tamanho, Node* lista){
-	return 0;
+int quickFit(FILE* arquivo, int pid, int tamanho, Node **lista, int tam_max){
+	Node *newNode, *aux;
+	int encontrou = FALSE, i;
+
+	i = tamanho-1;
+
+	aux = lista[i];
+
+	/* procura por um espaco com tamanho suficiente para o processo */
+	while (aux == NULL){
+		i++;
+		if (i == tam_max){
+			printf("ERRO: Memoria insuficiente.\n");
+			exit NULL;
+			return -1;
+		}
+		aux = lista[i];
+	}
+
+	lista[i] = lista[i]->quickprox;
+	if (aux->tamanho > tamanho){
+		newNode = malloc(sizeof(Node)); /* cria um novo no caso tenha sobrado memoria livre no no atual */
+		newNode->tipo = 'L';
+		newNode->prox = aux->prox;
+		newNode->inicio = (aux->inicio + tamanho);
+		newNode->tamanho = (aux->tamanho - tamanho);
+		newNode->quickprox = lista[newNode->tamanho-1];
+		lista[newNode->tamanho-1] = newNode;
+
+		aux->prox = newNode;
+		aux->tamanho = tamanho;
+		aux->tipo = 'P';
+		aux->quickprox = NULL;
+	}
+	else {
+		aux->tipo = 'P';
+		aux->quickprox = NULL;
+	}
+
+	escreveBin(pid, arquivo, aux->inicio, tamanho);
+
+	return aux->inicio;
 }
