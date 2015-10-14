@@ -73,7 +73,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
     if(totime != ultime){
 			ultime = totime;
-      printf("Tempo atual: %f\n", ultime);
       /* Checa quais processos ja terminaram */
       for(i = 0; i < proc_ini; i++){
         if(lista_proc[i].tf <= ultime && lista_proc[i].init >= 0){
@@ -138,7 +137,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     }
 
   }
-  printf("nproc: %d proc_fim: %d\n", nproc, proc_fim);
   printf ("Simulacao terminada no instante %d\n", (int) ultime);
 }
 
@@ -233,16 +231,16 @@ int main(){
   	else if (strcmp(argv[0], "executa") == 0) {
   		if (argv[1] != NULL){
   			intv = atoi(argv[1]);
-  			printf ("Intervalo definido como %d.\n", intv);
+  			printf("Intervalo definido como %d.\n", intv);
 		  }
   		else intv = 1;
 
 			printf("Iniciando execucao do simulador...\n");
 			ftotal = fopen("/tmp/ep2.mem","wb+");
 			if (ftotal != NULL)
-				printf ("ftotal aberto com sucesso!\n");
+				printf("ftotal aberto com sucesso!\n");
 			else {
-				printf ("ERRO: falha ao criar o arquivo ftotal.\n");
+				printf("ERRO: falha ao criar o arquivo ftotal.\n");
 				return 1;
   	  }
 
@@ -276,15 +274,9 @@ int main(){
 		}
   }
 
-  printf("estou antes do liberalista\n");
-  
-  
   if(procs == 1){
-  		printf("entrei no liberalista e ");
       liberaListaProcessos(lista_proc, nproc);
-      printf("sai do liberalista.\n");
   }
-  printf("passei pelo liberalista\n");
 
   if (argv != NULL)
   	free(argv);
