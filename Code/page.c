@@ -20,7 +20,7 @@ int checaQuadro(FILE *arquivo, Page *head, int pos, int pid){
   Page *p;
 
   for(p = head; p != NULL; p++){
-    if(p->pos == pos)
+    if(p->pos == pos && p->pid == pid)
       return p->map;
   }
 
