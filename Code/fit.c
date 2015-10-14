@@ -35,7 +35,7 @@ void mergeNode(Node* head, Node** headquick){
 					while(auxquick->quickprox != aux){
 						auxquick = auxquick->quickprox; /* percorre ate encontrar o antecessor do no que sofrera merge */
 					}
-					auxquick->prox = aux->prox;
+					auxquick->quickprox = aux->quickprox;
 				}
 				mortaquick = headquick[morta->tamanho-1];
 				if(mortaquick == morta){
@@ -45,10 +45,10 @@ void mergeNode(Node* head, Node** headquick){
 					while(mortaquick->quickprox != morta){
 						mortaquick = auxquick->quickprox; /* percorre ate encontrar o antecessor do no que sofrera merge */
 					}
-					mortaquick->prox = morta->prox;
+					mortaquick->quickprox = morta->quickprox;
 				}
-				aux->quickprox = headquick[aux->tamanho + morta->tamanho-1];
-				headquick[aux->tamanho + morta->tamanho-1] = aux;
+				aux->quickprox = headquick[aux->tamanho + morta->tamanho - 1];
+				headquick[aux->tamanho + morta->tamanho - 1] = aux;
 			}
 			if (nextNode == aux->prox)
 				nextNode = aux;
@@ -198,7 +198,7 @@ int quickFit(FILE* arquivo, int pid, int tamanho, Node **lista, int tam_max){
 		aux->tipo = 'P';
 		aux->quickprox = NULL;
 	}
-	
+
 	escreveBin(pid, arquivo, aux->inicio, tamanho);
 
 	return aux->inicio;
