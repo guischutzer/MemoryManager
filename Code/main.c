@@ -28,7 +28,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   int proc_fim = 0, proc_ini = 0;
   int pageFault = FALSE;
   int nquadros = 0;
-  int i;
+  int i, map;
 
 
   fit = 3;
@@ -55,22 +55,22 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     return;
   }
 
-if (fit != 3){
-  /* headtot = malloc(sizeof(Node));
-	headtot->tipo = 'L';
-	headtot->inicio = 0;
-	headtot->tamanho = total;
-	headtot->prox = NULL; */
+  if (fit != 3){
+    /* headtot = malloc(sizeof(Node));
+  	headtot->tipo = 'L';
+  	headtot->inicio = 0;
+  	headtot->tamanho = total;
+  	headtot->prox = NULL; */
 
-	headvirt = malloc(sizeof(Node));
-	headvirt->tipo = 'L';
-	headvirt->inicio = 0;
-	headvirt->tamanho = virtual;
-	headvirt->prox = NULL;
-}
-else {
-	/* headquick = malloc((virtual/16)*sizeof(Node*)); */
-}
+  	headvirt = malloc(sizeof(Node));
+  	headvirt->tipo = 'L';
+  	headvirt->inicio = 0;
+  	headvirt->tamanho = virtual;
+  	headvirt->prox = NULL;
+  }
+  else {
+  	/* headquick = malloc((virtual/16)*sizeof(Node*)); */
+  }
 
   gettimeofday(&tv, NULL);
   inicio = tv;
