@@ -54,7 +54,7 @@ void escreveBin(char pid, FILE* arquivo, int origem, int pags){
 Processo inputProcesso(char* linha) {
   int       i;
   char**    tokens = NULL;
-  Processo p;
+  Processo  p;
   Acesso   *a;
 
   tokens = tokenize(linha);

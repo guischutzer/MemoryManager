@@ -43,6 +43,13 @@ struct node
   Node*     prox;
 };
 
-
+typedef struct page Page;
+struct page
+{
+  int   pid;
+  int   pos;
+  int   map;
+  Page *prox;
+};
 
 char** tokenize(char* str);

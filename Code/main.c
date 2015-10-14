@@ -19,19 +19,23 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "page.h"
 #include "io.h"
 
-
-
 void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int virtual, int nproc, int fit, int pag, int intv){
   Node *aux = NULL, *headtot, *headvirt, **headquick;
+  Page *pag_head = NULL;
+  Acesso *a;
   struct timeval tv, inicio, fim;
   double totime, ultime = -1;
   int proc_fim = 0, proc_ini = 0;
+  int pageFault = FALSE;
+  int nquadros = 0;
   int i;
 
+
   fit = 3;
-  pag = 1;
+  pag = 2;
   nextNode = NULL;
   headquick = NULL;
+  pag_head->prox = NULL;
 
   if(lista_proc == NULL) {
     printf("Carregue um arquivo para executar.\n");
@@ -116,6 +120,27 @@ else {
         }
       }
 
+      /* Percorre listas de acessos e checa quais devem ser feitos */
+      for(i = 0; i < proc_ini; i++){
+        for(a = lista_proc[i].head; a != NULL; a = a->prox){
+          if(a->inst <= ultime){
+            map = checaQuadro(ftotal, pag_head, a->pos, i);
+            if(map == -1) /* PageFault! Chamamos algum algoritmo de substituicao*/ {
+              switch(pag){
+                case 1: /* NRUP */
+                  break;
+                case 2: /* FIFO */
+                  break;
+                case 3: /* SCP */
+                  break;
+                case 4: /* LRUP */
+                  break;
+              }
+            }
+          }
+        }
+      }
+
       while(lista_proc[proc_ini].t0 == ultime){
         switch(fit){
           case 1: /* FirstFit */
@@ -127,6 +152,8 @@ else {
             case 3: /* QuickFit*/
               break;
         }
+
+        pag_head = criaPaginas(lista_proc, proc_ini);
 
         proc_ini++;
       }
@@ -167,16 +194,16 @@ int main(){
   	if (strcmp(argv[0], "carrega") == 0) {
   		printf("Modo carrega.\n");
     	if(lista_proc != NULL)
-      	liberaListaProcessos(lista_proc, nproc);
+      	 liberaListaProcessos(lista_proc, nproc);
 
-        lista_proc = carrega(argv[1], &total, &virtual, &nproc);
-        printf("total = %d, virtual = %d.\n", total, virtual);
-        printf("numero de processos = %d.\n", nproc);
-        if(lista_proc == NULL && nproc > 0){
-        	printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
-        	return 1;
-        }
-        procs = 1;
+      lista_proc = carrega(argv[1], &total, &virtual, &nproc);
+      printf("total = %d, virtual = %d.\n", total, virtual);
+      printf("numero de processos = %d.\n", nproc);
+      if(lista_proc == NULL && nproc > 0){
+      	printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
+      	return 1;
+      }
+      procs = 1;
   	}
     else if (strcmp(argv[0], "imprime") == 0){
       if (lista_proc != NULL){
