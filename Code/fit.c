@@ -119,8 +119,6 @@ int nextFit(FILE* arquivo, int pid, int tamanho, Node *lista){
 		if ((aux == NULL) && (initNode == NULL)){
 			aux = lista;
 			initNode = nextNode;
-			printf("Mudei aux para lista e initNode para nextNode.\n");
-			imprimeNode(lista);
 		}
 		if ((initNode != NULL) && (aux == initNode)){
 			break;
