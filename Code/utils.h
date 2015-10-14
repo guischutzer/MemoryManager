@@ -55,7 +55,7 @@ struct page
 typedef struct frame Frame;
 struct frame
 {
-  int   pid;
+  int   pag;
   int   R;
 };
 

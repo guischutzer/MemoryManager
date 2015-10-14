@@ -30,7 +30,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   double totime, ultime = -1;
   int proc_fim = 0, proc_ini = 0;
   int nquadros = 0;
-  int i, j, map;
+  int i, j, map, outpag, outframe = 0;
 
   if (fit == 0) fit = 3;
   if (pag == 0) pag = 1;
@@ -176,15 +176,24 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
             if(map == -1) /* PageFault! Chamamos algum algoritmo de substituicao*/ {
               switch(pag){
                 case 1: /* NRUP */
-
                   break;
                 case 2: /* FIFO */
+                  outframe = FIFO(total, outframe);
                   break;
                 case 3: /* SCP */
                   break;
                 case 4: /* LRUP */
                   break;
               }
+              outpag = lista_frames[outframe].pag;
+              lista_pags[outpag].map = -1;
+
+              outframe.pag = lista_proc[i].init + a->pos;
+              outframe.R = 1;
+
+              escreveBin(i, total, outframe.pag, 1);
+
+              /* falta liberar o Acesso */
             }
           }
         }

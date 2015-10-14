@@ -21,10 +21,8 @@ void NRUP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirt
 
 }
 
-void FIFO(FILE *arquivo, Processo *lista_proc, int nquadros, int pid, int virtual){
-
-
-
+int FIFO(int total, int fifo){
+  return fifo = (fifo + 1) % total;
 }
 
 void SCP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirtual, Processo *lista_proc){
