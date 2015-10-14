@@ -67,6 +67,7 @@ Processo inputProcesso(char* linha) {
   if(atoi(tokens[3]) % 16 != 0)
     p.b++;
 
+  p.head = NULL;
   if(tokens[4] != NULL) {
     a = malloc(sizeof(Acesso));
     a->pos = atoi(tokens[4])/16;
