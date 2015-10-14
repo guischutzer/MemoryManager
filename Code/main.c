@@ -21,21 +21,20 @@ Tomás Marcondes Bezerra Paim - 7157602
 
 void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int virtual, int nproc, int fit, int pag, int intv){
   Node *aux = NULL, *headtot, *headvirt, **headquick;
-  Page *pag_head = NULL;
+  Page *lista_pags = NULL;
+  Frame *lista_frames = NULL;
   Acesso *a;
   struct timeval tv, inicio, fim;
   double totime, ultime = -1;
   int proc_fim = 0, proc_ini = 0;
-  int pageFault = FALSE;
   int nquadros = 0;
-  int i, map;
+  int i, j, map;
 
   if (fit == 0) fit = 3;
   if (pag == 0) pag = 1;
 
   nextNode = NULL;
   headquick = NULL;
-  pag_head->prox = NULL;
 
   if(lista_proc == NULL) {
     printf("Carregue um arquivo para executar.\n");
@@ -69,6 +68,20 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 			headquick[i] = NULL;
 		headquick[i] = headvirt;
 	}
+
+  lista_pags = malloc((virtual) * sizeof(Page));
+  for(i = 0; i < virtual; i++){
+    lista_pags[i].pid = -1;
+    lista_pags[i].pos = -1;
+    lista_pags[i].map = -1;
+  }
+
+  lista_frames = malloc((total) * sizeof(Frame));
+  for(i = 0; i < total; i++){
+    lista_frames[i].pid = -1;
+    lista_frames[i].R = 0;
+  }
+
 
   gettimeofday(&tv, NULL);
   inicio = tv;
@@ -124,6 +137,29 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
               mergeNode(headvirt, headquick);
               break;
           }
+
+
+          switch(pag){
+            case 1: /* NRUP */
+              break;
+            case 2: /* FIFO */
+              break;
+            case 3: /* SCP */
+              break;
+            case 4: /* LRUP */
+              break;
+          }
+
+          for(j = 0; j < lista_proc[i].b; j++){
+            lista_pags[lista_proc[i].init + j].pid = -1;
+            lista_pags[lista_proc[i].init + j].pos = -1;
+            if(lista_pags[lista_proc[i].init + j].map != -1){
+              lista_frames[lista_pags[lista_proc[i].init + j].map].pid = -1;
+              lista_frames[lista_pags[lista_proc[i].init + j].map].R = 0;
+              lista_pags[lista_proc[i].init + j].map = -1;
+            }
+          }
+
           lista_proc[i].init = -1;
         }
       }
@@ -132,7 +168,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
       for(i = 0; i < proc_ini; i++){
         for(a = lista_proc[i].head; a != NULL; a = a->prox){
           if(a->inst <= ultime){
-            map = checaQuadro(ftotal, pag_head, a->pos, i);
+            map = lista_pags[lista_proc[i].init + a->pos].map;
             if(map == -1) /* PageFault! Chamamos algum algoritmo de substituicao*/ {
               switch(pag){
                 case 1: /* NRUP */
@@ -161,25 +197,36 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
             lista_proc[proc_ini].init = quickFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headquick, virtual);
             break;
         }
-
-        pag_head = criaPaginas(lista_proc, proc_ini);
-
+        for(i = 0; i < lista_proc[proc_ini].b; i++){
+          lista_pags[lista_proc[proc_ini].init + i].pid = proc_ini;
+          lista_pags[lista_proc[proc_ini].init + i].pos = i;
+          lista_pags[lista_proc[proc_ini].init + i].map = -1;
+        }
         proc_ini++;
       }
       if ((int) ultime % intv == 0){
 
           printf("Instante atual: %d\n", (int) ultime);
-          printf("Arquivo binario da memoria total: \n");
+
+          printf("Paginas (memoria virtual):\n");
+          imprimePags(lista_pags, virtual);
+          printf("Quadros (memoria fisica):\n");
+          imprimeFrames(lista_frames, total);
+
+          /*printf("Arquivo binario da memoria total: \n");
           imprimeBin(ftotal, total*16);
           printf("Arquivo binario da memoria virtual: \n");
           imprimeBin(fvirtual, virtual*16);
-          printf ("\n");
+          printf ("\n");*/
       }
 
     }
 
   }
   printf ("Simulacao terminada no instante %d\n", (int) ultime);
+  if(lista_pags != NULL) free(lista_pags);
+  if(lista_frames != NULL) free(lista_frames);
+  if(headquick != NULL) free(headquick);
 }
 
 int main(){

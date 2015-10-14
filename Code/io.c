@@ -51,6 +51,26 @@ void escreveBin(char pid, FILE* arquivo, int origem, int pags){
 		fwrite(&pid, sizeof(pid), 1, arquivo);
 }
 
+void imprimePags(Page* lista, int tamanho){
+  int i;
+  printf("NO. PAG  [PID|POS|MAP]\n");
+  printf("----------------------\n");
+  for(i = 0; i < tamanho; i++){
+    printf("pag %02d   [%3d|%3d|%3d]\n", i, lista[i].pid, lista[i].pos, lista[i].map);
+  }
+  printf("\n");
+}
+
+void imprimeFrames(Frame* lista, int tamanho){
+  int i;
+  printf("NO. FRA  [PID| R ]\n");
+  printf("------------------\n");
+  for(i = 0; i < tamanho; i++){
+    printf("fra %02d   [%3d|%3d]\n", i, lista[i].pid, lista[i].R);
+  }
+  printf("\n");
+}
+
 Processo inputProcesso(char* linha) {
   int       i;
   char**    tokens = NULL;

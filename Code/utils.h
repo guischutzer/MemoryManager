@@ -50,7 +50,13 @@ struct page
   int   pid;
   int   pos;
   int   map;
-  Page *prox;
+};
+
+typedef struct frame Frame;
+struct frame
+{
+  int   pid;
+  int   R;
 };
 
 char** tokenize(char* str);

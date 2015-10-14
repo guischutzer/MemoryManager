@@ -10,6 +10,10 @@ void escreveBin(char pid, FILE* arquivo, int origem, int pags);
 
 void imprimeProc (Processo proc);
 
+void imprimePags(Page* lista, int tamanho);
+
+void imprimeFrames(Frame* lista, int tamanho);
+
 Processo* carrega(char* nome, int* total, int* virtual, int* nproc);
 
 void liberaListaAcessos(Acesso *head);
