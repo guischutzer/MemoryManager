@@ -20,7 +20,7 @@ struct acesso
 {
   int     inst;
   int     pos;
-  Acesso* prox;
+  Acesso *prox;
 };
 
 typedef struct processo Processo;
@@ -31,7 +31,7 @@ struct processo
   int     tf;
   int     b;
   int     init;
-  Acesso* head;
+  Acesso *head;
 };
 
 typedef struct node Node;
@@ -40,8 +40,8 @@ struct node
   char      tipo;
   int       inicio;
   int       tamanho;
-  Node*     prox;
-  Node*     quickprox;
+  Node     *prox;
+  Node     *quickprox;
 };
 
 typedef struct page Page;
@@ -50,13 +50,13 @@ struct page
   int   pid;
   int   pos;
   int   map;
+  int   R;
 };
 
-typedef struct frame Frame;
-struct frame
-{
-  int   pag;
-  int   R;
+typedef struct fifoPage FifoPage;
+struct fifoPage{
+  int       pag;
+  FifoPage *prox;
 };
 
 char** tokenize(char* str);

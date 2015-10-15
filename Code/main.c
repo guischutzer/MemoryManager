@@ -22,9 +22,10 @@ Tomás Marcondes Bezerra Paim - 7157602
 void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int virtual, int nproc, int fit, int subst, int intv){
   Node *aux = NULL, *headtot, *headvirt, **headquick;
   Page *lista_pags = NULL;
-  FifoPage *fifoMorta, *fifoTail = NULL, *fifoHead = NULL;
+  FifoPage *fifoAux = NULL, *fifoBux = NULL, *fifoTail = NULL, *fifoHead = NULL;
   Acesso *a = NULL;
   Processo p;
+  Page pagina;
 
   int *lista_frames = NULL;
   struct timeval tv, inicio, fim;
@@ -33,12 +34,12 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   int nframes = 0;
   int i, j, outpag, outframe = 0;
 
+
   if (fit == 0) fit = 3;
   if (subst == 0) subst = 1;
 
   nextNode = NULL;
   headquick = NULL;
-  fifoHead->prox = NULL;
 
   if(lista_proc == NULL) {
     printf("Carregue um arquivo para executar.\n");
@@ -58,6 +59,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     return;
   }
 
+  printf("Cheguei 1\n");
 
 	headvirt = malloc(sizeof(Node));
 	headvirt->tipo = 'L';
@@ -73,6 +75,8 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 		headquick[i] = headvirt;
 	}
 
+  printf("Cheguei 2\n");
+
   lista_pags = malloc((virtual) * sizeof(Page));
   for(i = 0; i < virtual; i++){
     lista_pags[i].pid = -1;
@@ -81,10 +85,13 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     lista_pags[i].R = 0;
   }
 
+  printf("Cheguei 3\n");
+
   lista_frames = malloc((total) * sizeof(int));
   for(i = 0; i < total; i++)
     lista_frames[i] = 0;
 
+printf("Cheguei 4\n");
 
   gettimeofday(&tv, NULL);
   inicio = tv;
@@ -141,26 +148,36 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
               break;
           }
 
-          switch(subst){
-            case 1: /* NRUP */
-              break;
-            case 2: /* FIFO */
-              break;
-            case 3: /* SCP */
-              break;
-            case 4: /* LRUP */
-              break;
-          }
-
           /* Tira as páginas e quadros dos processos que acabaram */
           for(j = 0; j < lista_proc[i].b; j++){
             p = lista_proc[i];
-            lista_pags[p.init + j].pid = -1;
-            lista_pags[p.init + j].pos = -1;
             if(lista_pags[p.init + j].map != -1){
+              switch(subst){
+                case 1: /* NRUP */
+                  break;
+                case 2: /* FIFO */
+                  for(fifoAux = fifoHead; fifoAux->pag != p.init + j; fifoAux = fifoAux->prox){
+                    if(fifoAux == fifoHead) fifoBux = fifoHead;
+                    else fifoBux = fifoBux->prox;
+                  }
+
+                  if(fifoAux == fifoHead) fifoHead = fifoHead->prox;
+                  else fifoBux->prox = fifoAux->prox;
+                  free(fifoAux);
+
+                  nframes--;
+                  break;
+                case 3: /* SCP */
+                  break;
+                case 4: /* LRUP */
+                  break;
+              }
+              lista_pags[p.init + j].pid = -1;
+              lista_pags[p.init + j].pos = -1;
               escreveBin(-1, ftotal, lista_pags[p.init + j].map, 1);
               lista_frames[lista_pags[p.init + j].map] = 0;
               lista_pags[p.init + j].map = -1;
+              lista_pags[p.init + j].R = 0;
             }
           }
           lista_proc[i].init = -1;
@@ -195,13 +212,13 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                     nframes++;
                     pagina.map = j;
                     if(fifoHead == NULL){
-                      fifoHead = malloc(sizeof(fifoPage));
-                      fifoHead = pagina;
+                      fifoHead = malloc(sizeof(FifoPage));
+                      fifoHead->pag = lista_proc[i].init + a->pos;
                       fifoTail = fifoHead;
                     }
                     else{
-                      fifoTail->prox = malloc(sizeof(fifoPage));
-                      fifoTail->pag = pagina;
+                      fifoTail->prox = malloc(sizeof(FifoPage));
+                      fifoTail->pag = lista_proc[i].init + a->pos;
                       fifoTail = fifoTail->prox;
                     }
                   }
@@ -339,7 +356,7 @@ int main(){
   				break;
   			default :
   				printf("Comando desconhecido. Por favor insira outro comando.\n");
-  				pag = 0;
+  				subst = 0;
   				break;
   		}
   	}
@@ -379,7 +396,8 @@ int main(){
 			}
 
 			escreveBin(-1, fvirtual, 0, virtual);
-      executa(lista_proc, ftotal, fvirtual, total, virtual, nproc, fit, pag, intv);
+      printf("Cheguei 0\n");
+      executa(lista_proc, ftotal, fvirtual, total, virtual, nproc, fit, subst, intv);
   	}
 
   	else if (strcmp(argv[0], "sai") == 0) {

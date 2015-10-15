@@ -60,12 +60,13 @@ void imprimePags(Page* lista, int tamanho){
   printf("\n");
 }
 
-void imprimeFrames(Frame* lista, int tamanho){
+void imprimeFrames(int* lista, int tamanho){
   int i;
-  printf("NO. FRA  [PAG|  R]\n");
+  printf("         USADO      \n");
   printf("------------------\n");
   for(i = 0; i < tamanho; i++){
-    printf("fra %02d   [%3d|%3d]\n", i, lista[i].pag, lista[i].R);
+    if(lista[i]) printf("fra %02d [#######]\n", i);
+    else printf("fra %02d [       ]\n", i);
   }
   printf("\n");
 }
