@@ -36,7 +36,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
 
   if (fit == 0) fit = 1;
-  if (subst == 0) subst = 2;
+  if (subst == 0) subst = 3;
 
   nextNode = NULL;
   headquick = NULL;
@@ -162,6 +162,17 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                   nframes--;
                   break;
                 case 3: /* SCP */
+
+                  for(fifoAux = fifoHead; fifoAux->pag != p.init + j; fifoAux = fifoAux->prox){
+                    if(fifoAux == fifoHead) fifoBux = fifoHead;
+                    else fifoBux = fifoBux->prox;
+                  }
+                  if(fifoTail == fifoAux) fifoTail = fifoBux;
+                  if(fifoAux == fifoHead) fifoHead = fifoHead->prox;
+                  else fifoBux->prox = fifoAux->prox;
+                  free(fifoAux);
+
+                  nframes--;
                   break;
                 case 4: /* LRUP */
                   break;
@@ -224,6 +235,44 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                   escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
                   break;
                 case 3: /* SCP */
+                  if (nframes == total){
+                    while(lista_pags[fifoHead->pag].R == TRUE){
+                    	lista_pags[fifoHead->pag].R = FALSE;
+                    	fifoTail->prox = fifoHead;
+                    	fifoTail = fifoHead;
+                    	fifoHead = fifoHead->prox;
+                    	fifoTail->prox = NULL;
+                    }
+                    lista_pags[lista_proc[i].init + a->pos].map = lista_pags[fifoHead->pag].map;
+                    lista_pags[fifoHead->pag].R = TRUE;
+                    lista_pags[fifoHead->pag].map = -1;
+                    lista_pags[fifoHead->pag].R = FALSE;
+                    fifoHead->pag = lista_proc[i].init + a->pos;
+
+                    fifoTail->prox = fifoHead;
+                    fifoTail = fifoHead;
+                    fifoHead = fifoHead->prox;
+                    fifoTail->prox = NULL;
+                  }
+                  else{
+                    for(j = 0; j < total && lista_frames[j] == TRUE; j++);
+                    lista_frames[j] = TRUE;
+                    nframes++;
+                    lista_pags[lista_proc[i].init + a->pos].map = j;
+                    if(fifoHead == NULL){
+                      fifoHead = malloc(sizeof(FifoPage));
+                      fifoHead->prox = NULL;
+                      fifoHead->pag = lista_proc[i].init + a->pos;
+                      fifoTail = fifoHead;
+                    }
+                    else{
+                      fifoTail->prox = malloc(sizeof(FifoPage));
+                      fifoTail = fifoTail->prox;
+                      fifoTail->pag = lista_proc[i].init + a->pos;
+                      fifoTail->prox = NULL;
+                    }
+                  }
+                  escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
                   break;
                 case 4: /* LRUP */
                   break;
@@ -262,12 +311,12 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
           printf("Instante atual: %d\n", (int) ultime);
 
-          printf("Paginas (memoria virtual):\n");
+          /* printf("Paginas (memoria virtual):\n");
           imprimePags(lista_pags, virtual);
           printf("Quadros (memoria fisica):\n");
           imprimeFrames(lista_frames, total);
 
-          imprimeFifo(fifoHead);
+          imprimeFifo(fifoHead); */
 
           /*for(i = 0; i < nproc; i++){
             imprimeProc(lista_proc[i]);
