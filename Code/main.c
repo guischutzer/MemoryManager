@@ -218,13 +218,15 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                     lista_pags[lista_proc[i].init + a->pos].map = j;
                     if(fifoHead == NULL){
                       fifoHead = malloc(sizeof(FifoPage));
+                      fifoHead->prox = NULL;
                       fifoHead->pag = lista_proc[i].init + a->pos;
                       fifoTail = fifoHead;
                     }
                     else{
                       fifoTail->prox = malloc(sizeof(FifoPage));
-                      fifoTail->pag = lista_proc[i].init + a->pos;
                       fifoTail = fifoTail->prox;
+                      fifoTail->pag = lista_proc[i].init + a->pos;
+                      fifoTail->prox = NULL;
                     }
                   }
                   escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
