@@ -198,6 +198,7 @@ printf("Cheguei 4\n");
                 case 1: /* NRUP */
                   break;
                 case 2: /* FIFO */
+                  printf("PageFault!\n");
                   if (nframes == total){
                     lista_pags[lista_proc[i].init + a->pos].map = lista_pags[fifoHead->pag].map;
                     lista_pags[fifoHead->pag].R = TRUE;
