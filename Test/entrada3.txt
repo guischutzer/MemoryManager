@@ -1,0 +1,7 @@
+128 256
+0 primproc 10 32 0 1 1 2
+3 rapiproc 7 32
+9 bigproc 40 128 4 12 5 15 6 18
+17 secproc 37 64 7 20 3 25 4 30 0 35
+27 ultproc 48 16 1 30 2 32 1 34
+30 voltproc 48 32

@@ -151,7 +151,6 @@ printf("Cheguei 4\n");
           for(j = 0; j < lista_proc[i].b; j++){
             p = lista_proc[i];
             if(lista_pags[p.init + j].map != -1){
-              printf("oi\n");
               lista_frames[lista_pags[p.init + j].map] = 0;
               switch(subst){
                 case 1: /* NRUP */

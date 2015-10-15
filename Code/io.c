@@ -77,6 +77,7 @@ Processo inputProcesso(char* linha) {
   Processo  p;
   Acesso   *a;
 
+
   tokens = tokenize(linha);
 
   strcpy(p.nome, tokens[1]);
@@ -88,6 +89,7 @@ Processo inputProcesso(char* linha) {
     p.b++;
 
   p.head = NULL;
+
   if(tokens[4] != NULL) {
     a = malloc(sizeof(Acesso));
     a->pos = atoi(tokens[4])/16;
