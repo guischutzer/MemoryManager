@@ -98,7 +98,7 @@ Processo inputProcesso(char* linha) {
 
     for(i = 6; tokens[i] != NULL; i++){
       a->prox = malloc(sizeof(Acesso));
-      a->prox->pos = atoi(tokens[i]);
+      a->prox->pos = atoi(tokens[i])/16;
       a->prox->inst = atoi(tokens[++i]);
       a = a->prox;
     }

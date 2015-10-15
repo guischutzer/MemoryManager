@@ -191,6 +191,7 @@ printf("Cheguei 4\n");
       for(i = 0; i < proc_ini; i++){
         for(a = lista_proc[i].head; a != NULL; a = a->prox){
           if(a->inst == (int) ultime){
+            printf("página que eu quero acessar: %02d\n",lista_proc[i].init + a->pos);
             pagina = lista_pags[lista_proc[i].init + a->pos];
             if(lista_pags[lista_proc[i].init + a->pos].map == -1){ /* PageFault!! Chamamos algum algoritmo de substituicao*/
               switch(subst){
@@ -378,6 +379,9 @@ int main(){
   			printf("Intervalo definido como %d.\n", intv);
 		  }
   		else intv = 1;
+
+      for(i = 0; i < nproc; i++)
+        imprimeProc(lista_proc[i]);
 
 			printf("Iniciando execucao do simulador...\n");
 			ftotal = fopen("/tmp/ep2.mem","wb+");
