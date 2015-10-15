@@ -19,24 +19,26 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "page.h"
 #include "io.h"
 
-void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int virtual, int nproc, int fit, int pag, int intv){
+void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int virtual, int nproc, int fit, int subst, int intv){
   Node *aux = NULL, *headtot, *headvirt, **headquick;
   Page *lista_pags = NULL;
-  Frame *lista_frames = NULL;
+  FifoPage *fifoMorta, *fifoTail = NULL, *fifoHead = NULL;
   Acesso *a = NULL;
   Processo p;
 
+  int *lista_frames = NULL;
   struct timeval tv, inicio, fim;
   double totime, ultime = -1;
   int proc_fim = 0, proc_ini = 0;
-  int nquadros = 0;
-  int i, j, map, outpag, outframe = 0;
+  int nframes = 0;
+  int i, j, outpag, outframe = 0;
 
   if (fit == 0) fit = 3;
-  if (pag == 0) pag = 1;
+  if (subst == 0) subst = 1;
 
   nextNode = NULL;
   headquick = NULL;
+  fifoHead->prox = NULL;
 
   if(lista_proc == NULL) {
     printf("Carregue um arquivo para executar.\n");
@@ -51,7 +53,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     printf("Nenhum algoritmo de Fit escolhido.\n");
     return;
   }
-  else if (pag == 0){
+  else if (subst == 0){
     printf("Nenhum algoritmo de substituição de página escolhido.\n");
     return;
   }
@@ -76,13 +78,12 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     lista_pags[i].pid = -1;
     lista_pags[i].pos = -1;
     lista_pags[i].map = -1;
+    lista_pags[i].R = 0;
   }
 
-  lista_frames = malloc((total) * sizeof(Frame));
-  for(i = 0; i < total; i++){
-    lista_frames[i].pid = -1;
-    lista_frames[i].R = 0;
-  }
+  lista_frames = malloc((total) * sizeof(int));
+  for(i = 0; i < total; i++)
+    lista_frames[i] = 0;
 
 
   gettimeofday(&tv, NULL);
@@ -140,8 +141,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
               break;
           }
 
-
-          switch(pag){
+          switch(subst){
             case 1: /* NRUP */
               break;
             case 2: /* FIFO */
@@ -159,8 +159,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
             lista_pags[p.init + j].pos = -1;
             if(lista_pags[p.init + j].map != -1){
               escreveBin(-1, ftotal, lista_pags[p.init + j].map, 1);
-              lista_frames[lista_pags[p.init + j].map].pid = -1;
-              lista_frames[lista_pags[p.init + j].map].R = 0;
+              lista_frames[lista_pags[p.init + j].map] = 0;
               lista_pags[p.init + j].map = -1;
             }
           }
@@ -172,26 +171,47 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
       for(i = 0; i < proc_ini; i++){
         for(a = lista_proc[i].head; a != NULL; a = a->prox){
           if(a->inst <= ultime){
-            map = lista_pags[lista_proc[i].init + a->pos].map;
-            if(map == -1) /* PageFault! Chamamos algum algoritmo de substituicao*/ {
-              switch(pag){
+            pagina = lista_pags[lista_proc[i].init + a->pos];
+            if(pagina.map == -1){ /* PageFault!! Chamamos algum algoritmo de substituicao*/
+              switch(subst){
                 case 1: /* NRUP */
                   break;
                 case 2: /* FIFO */
-                  outframe = FIFO(total, outframe);
+                  if (nframes == total){
+                    pagina.map = lista_pags[fifoHead->pag].map;
+                    pagina.R = TRUE;
+                    lista_pags[fifoHead->pag].map = -1;
+                    lista_pags[fifoHead->pag].R = FALSE;
+                    fifoHead->pag = lista_proc[i].init + a->pos;
+
+                    fifoTail->prox = fifoHead;
+                    fifoTail = fifoHead;
+                    fifoHead = fifoHead->prox;
+                    fifoTail->prox = NULL;
+                  }
+                  else{
+                    for(j = 0; j < total && lista_frames[j] == TRUE; j++);
+                    lista_frames[j] = TRUE;
+                    nframes++;
+                    pagina.map = j;
+                    if(fifoHead == NULL){
+                      fifoHead = malloc(sizeof(fifoPage));
+                      fifoHead = pagina;
+                      fifoTail = fifoHead;
+                    }
+                    else{
+                      fifoTail->prox = malloc(sizeof(fifoPage));
+                      fifoTail->pag = pagina;
+                      fifoTail = fifoTail->prox;
+                    }
+                  }
+                  escreveBin(i, ftotal, pagina.map, 1);
                   break;
                 case 3: /* SCP */
                   break;
                 case 4: /* LRUP */
                   break;
               }
-              outpag = lista_frames[outframe].pag;
-              lista_pags[outpag].map = -1;
-
-              outframe.pag = lista_proc[i].init + a->pos;
-              outframe.R = 1;
-
-              escreveBin(i, total, outframe.pag, 1);
 
               /* falta liberar o Acesso */
             }
@@ -247,7 +267,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 int main(){
   char*  input, shell_prompt[MAXCHAR];
   char** argv = NULL;
-  int pag = 0, fit = 0, nproc = 0, intv = 0;
+  int subst = 0, fit = 0, nproc = 0, intv = 0;
   int total = 0, virtual = 0;
   int i = 0, procs = 0;
   FILE *ftotal = NULL, *fvirtual = NULL;
@@ -303,7 +323,7 @@ int main(){
   		}
   	}
   	else if (strcmp(argv[0], "substitui") == 0) {
-  		pag = atoi(argv[1]);
+  		subst = atoi(argv[1]);
   		switch(atoi(argv[1])){
   			case 1 :
   				printf("Substituicao Not Recently Used Page.\n");

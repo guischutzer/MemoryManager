@@ -21,7 +21,7 @@ void NRUP(int nproc, int total, int virtual, int intv, FILE *ftotal, FILE *fvirt
 
 }
 
-int FIFO(int total, int fifo){
+int FIFO(Page* lista, int total, int fifo){
   return fifo = (fifo + 1) % total;
 }
 
