@@ -35,7 +35,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   int i, j, outpag, outframe = 0;
 
 
-  if (fit == 0) fit = 3;
+  if (fit == 0) fit = 1;
   if (subst == 0) subst = 2;
 
   nextNode = NULL;
@@ -151,6 +151,7 @@ printf("Cheguei 4\n");
           for(j = 0; j < lista_proc[i].b; j++){
             p = lista_proc[i];
             if(lista_pags[p.init + j].map != -1){
+              printf("oi\n");
               lista_frames[lista_pags[p.init + j].map] = 0;
               switch(subst){
                 case 1: /* NRUP */
@@ -173,15 +174,18 @@ printf("Cheguei 4\n");
                 case 4: /* LRUP */
                   break;
               }
-              lista_pags[p.init + j].pid = -1;
-              lista_pags[p.init + j].pos = -1;
               escreveBin(-1, ftotal, lista_pags[p.init + j].map, 1);
-              lista_pags[p.init + j].map = -1;
-              lista_pags[p.init + j].R = 0;
             }
+            lista_pags[p.init + j].pid = -1;
+            lista_pags[p.init + j].pos = -1;
+            lista_pags[p.init + j].map = -1;
+            lista_pags[p.init + j].R = 0;
+
           }
+
           lista_proc[i].init = -1;
         }
+
       }
 
       /* Percorre listas de acessos e checa quais devem ser feitos */
@@ -210,7 +214,6 @@ printf("Cheguei 4\n");
                     for(j = 0; j < total && lista_frames[j] == TRUE; j++);
                     lista_frames[j] = TRUE;
                     nframes++;
-                    printf("oi\n");
                     lista_pags[lista_proc[i].init + a->pos].map = j;
                     if(fifoHead == NULL){
                       fifoHead = malloc(sizeof(FifoPage));
