@@ -59,8 +59,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     return;
   }
 
-  printf("Cheguei 1\n");
-
 	headvirt = malloc(sizeof(Node));
 	headvirt->tipo = 'L';
 	headvirt->inicio = 0;
@@ -75,8 +73,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 		headquick[i] = headvirt;
 	}
 
-  printf("Cheguei 2\n");
-
   lista_pags = malloc((virtual) * sizeof(Page));
   for(i = 0; i < virtual; i++){
     lista_pags[i].pid = -1;
@@ -85,13 +81,10 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     lista_pags[i].R = 0;
   }
 
-  printf("Cheguei 3\n");
 
   lista_frames = malloc((total) * sizeof(int));
   for(i = 0; i < total; i++)
     lista_frames[i] = 0;
-
-printf("Cheguei 4\n");
 
   gettimeofday(&tv, NULL);
   inicio = tv;
@@ -106,7 +99,7 @@ printf("Cheguei 4\n");
 			ultime = totime;
       /* Checa quais processos ja terminaram */
       for(i = 0; i < proc_ini; i++){
-        if(lista_proc[i].tf <= ultime && lista_proc[i].init >= 0){
+        if(lista_proc[i].tf == (int) ultime && lista_proc[i].init >= 0){
           proc_fim++;
           escreveBin(-1, fvirtual, lista_proc[i].init, lista_proc[i].b);
           switch(fit){
@@ -190,56 +183,64 @@ printf("Cheguei 4\n");
       /* Percorre listas de acessos e checa quais devem ser feitos */
       for(i = 0; i < proc_ini; i++){
         a = lista_proc[i].head;
-        if(a->inst <= (int) ultime){
-          printf("página que eu quero acessar: %02d\n",lista_proc[i].init + a->pos);
-          pagina = lista_pags[lista_proc[i].init + a->pos];
-          if(lista_pags[lista_proc[i].init + a->pos].map == -1){ /* PageFault!! Chamamos algum algoritmo de substituicao*/
-            switch(subst){
-              case 1: /* NRUP */
-                break;
-              case 2: /* FIFO */
-                printf("PageFault!\n");
-                if (nframes == total){
-                  lista_pags[lista_proc[i].init + a->pos].map = lista_pags[fifoHead->pag].map;
-                  lista_pags[fifoHead->pag].R = TRUE;
-                  lista_pags[fifoHead->pag].map = -1;
-                  lista_pags[fifoHead->pag].R = FALSE;
-                  fifoHead->pag = lista_proc[i].init + a->pos;
+        if(a != NULL){
+          if(a->inst <= (int) ultime){
+            printf("página que eu quero acessar: %02d\n",lista_proc[i].init + a->pos);
+            pagina = lista_pags[lista_proc[i].init + a->pos];
+            if(lista_pags[lista_proc[i].init + a->pos].map == -1){ /* PageFault!! Chamamos algum algoritmo de substituicao*/
+              switch(subst){
+                case 1: /* NRUP */
+                  break;
+                case 2: /* FIFO */
+                  printf("PageFault!\n");
+                  if (nframes == total){
+                    printf("Cheguei 0\n");
+                    printf("i: %d\n", i);
 
-                  fifoTail->prox = fifoHead;
-                  fifoTail = fifoHead;
-                  fifoHead = fifoHead->prox;
-                  fifoTail->prox = NULL;
-                }
-                else{
-                  for(j = 0; j < total && lista_frames[j] == TRUE; j++);
-                  lista_frames[j] = TRUE;
-                  nframes++;
-                  lista_pags[lista_proc[i].init + a->pos].map = j;
-                  if(fifoHead == NULL){
-                    fifoHead = malloc(sizeof(FifoPage));
+                    if(fifoHead == NULL) printf("Aff...\n");
+                    lista_pags[lista_proc[i].init + a->pos].map = lista_pags[fifoHead->pag].map;
+                    lista_pags[fifoHead->pag].R = TRUE;
+                    lista_pags[fifoHead->pag].map = -1;
+                    lista_pags[fifoHead->pag].R = FALSE;
                     fifoHead->pag = lista_proc[i].init + a->pos;
+
+                    printf("Cheguei 1\n");
+                    fifoTail->prox = fifoHead;
                     fifoTail = fifoHead;
+                    fifoHead = fifoHead->prox;
+                    fifoTail->prox = NULL;
+                    printf("Cheguei 2\n");
                   }
                   else{
-                    fifoTail->prox = malloc(sizeof(FifoPage));
-                    fifoTail->pag = lista_proc[i].init + a->pos;
-                    fifoTail = fifoTail->prox;
+                    for(j = 0; j < total && lista_frames[j] == TRUE; j++);
+                    lista_frames[j] = TRUE;
+                    nframes++;
+                    lista_pags[lista_proc[i].init + a->pos].map = j;
+                    if(fifoHead == NULL){
+                      fifoHead = malloc(sizeof(FifoPage));
+                      fifoHead->pag = lista_proc[i].init + a->pos;
+                      fifoTail = fifoHead;
+                    }
+                    else{
+                      fifoTail->prox = malloc(sizeof(FifoPage));
+                      fifoTail->pag = lista_proc[i].init + a->pos;
+                      fifoTail = fifoTail->prox;
+                    }
                   }
-                }
-                escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
-                break;
-              case 3: /* SCP */
-                break;
-              case 4: /* LRUP */
-                break;
+                  escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
+                  break;
+                case 3: /* SCP */
+                  break;
+                case 4: /* LRUP */
+                  break;
+              }
+
             }
 
-            amorta = lista_proc[i].head;
+            amorta = a;
             lista_proc[i].head = lista_proc[i].head->prox;
             free(amorta);
-
-          }
+            }
         }
       }
 
@@ -272,7 +273,9 @@ printf("Cheguei 4\n");
           printf("Quadros (memoria fisica):\n");
           imprimeFrames(lista_frames, total);
 
-          for(i = 0; i < nproc; i++){
+          imprimeFifo(fifoHead);
+
+          /*for(i = 0; i < nproc; i++){
             imprimeProc(lista_proc[i]);
             printf("\n");
           }
@@ -311,6 +314,15 @@ int main(){
     input = readline(shell_prompt);
     add_history(input);
   	argv = tokenize(input);
+
+    lista_proc = carrega("../Test/entrada3.txt", &total, &virtual, &nproc);
+    printf("total = %d, virtual = %d.\n", total, virtual);
+    printf("numero de processos = %d.\n", nproc);
+    if(lista_proc == NULL && nproc > 0){
+      printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
+      return 1;
+    }
+    procs = 1;
 
   	if (strcmp(argv[0], "carrega") == 0) {
   		printf("Modo carrega.\n");
@@ -389,9 +401,6 @@ int main(){
 		  }
   		else intv = 1;
 
-      for(i = 0; i < nproc; i++)
-        imprimeProc(lista_proc[i]);
-
 			printf("Iniciando execucao do simulador...\n");
 			ftotal = fopen("/tmp/ep2.mem","wb+");
 			if (ftotal != NULL)
@@ -412,7 +421,6 @@ int main(){
 			}
 
 			escreveBin(-1, fvirtual, 0, virtual);
-      printf("Cheguei 0\n");
       executa(lista_proc, ftotal, fvirtual, total, virtual, nproc, fit, subst, intv);
   	}
 
