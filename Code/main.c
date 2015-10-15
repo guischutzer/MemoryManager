@@ -36,7 +36,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
 
   if (fit == 0) fit = 3;
-  if (subst == 0) subst = 1;
+  if (subst == 0) subst = 2;
 
   nextNode = NULL;
   headquick = NULL;
@@ -109,7 +109,6 @@ printf("Cheguei 4\n");
         if(lista_proc[i].tf <= ultime && lista_proc[i].init >= 0){
           proc_fim++;
           escreveBin(-1, fvirtual, lista_proc[i].init, lista_proc[i].b);
-
           switch(fit){
             case 1: /* FirstFit */
               aux = headvirt;
@@ -152,10 +151,12 @@ printf("Cheguei 4\n");
           for(j = 0; j < lista_proc[i].b; j++){
             p = lista_proc[i];
             if(lista_pags[p.init + j].map != -1){
+              lista_frames[lista_pags[p.init + j].map] = 0;
               switch(subst){
                 case 1: /* NRUP */
                   break;
                 case 2: /* FIFO */
+
                   for(fifoAux = fifoHead; fifoAux->pag != p.init + j; fifoAux = fifoAux->prox){
                     if(fifoAux == fifoHead) fifoBux = fifoHead;
                     else fifoBux = fifoBux->prox;
@@ -175,7 +176,6 @@ printf("Cheguei 4\n");
               lista_pags[p.init + j].pid = -1;
               lista_pags[p.init + j].pos = -1;
               escreveBin(-1, ftotal, lista_pags[p.init + j].map, 1);
-              lista_frames[lista_pags[p.init + j].map] = 0;
               lista_pags[p.init + j].map = -1;
               lista_pags[p.init + j].R = 0;
             }
@@ -187,16 +187,16 @@ printf("Cheguei 4\n");
       /* Percorre listas de acessos e checa quais devem ser feitos */
       for(i = 0; i < proc_ini; i++){
         for(a = lista_proc[i].head; a != NULL; a = a->prox){
-          if(a->inst <= ultime){
+          if(a->inst == (int) ultime){
             pagina = lista_pags[lista_proc[i].init + a->pos];
-            if(pagina.map == -1){ /* PageFault!! Chamamos algum algoritmo de substituicao*/
+            if(lista_pags[lista_proc[i].init + a->pos].map == -1){ /* PageFault!! Chamamos algum algoritmo de substituicao*/
               switch(subst){
                 case 1: /* NRUP */
                   break;
                 case 2: /* FIFO */
                   if (nframes == total){
-                    pagina.map = lista_pags[fifoHead->pag].map;
-                    pagina.R = TRUE;
+                    lista_pags[lista_proc[i].init + a->pos].map = lista_pags[fifoHead->pag].map;
+                    lista_pags[fifoHead->pag].R = TRUE;
                     lista_pags[fifoHead->pag].map = -1;
                     lista_pags[fifoHead->pag].R = FALSE;
                     fifoHead->pag = lista_proc[i].init + a->pos;
@@ -210,7 +210,8 @@ printf("Cheguei 4\n");
                     for(j = 0; j < total && lista_frames[j] == TRUE; j++);
                     lista_frames[j] = TRUE;
                     nframes++;
-                    pagina.map = j;
+                    printf("oi\n");
+                    lista_pags[lista_proc[i].init + a->pos].map = j;
                     if(fifoHead == NULL){
                       fifoHead = malloc(sizeof(FifoPage));
                       fifoHead->pag = lista_proc[i].init + a->pos;
@@ -222,7 +223,7 @@ printf("Cheguei 4\n");
                       fifoTail = fifoTail->prox;
                     }
                   }
-                  escreveBin(i, ftotal, pagina.map, 1);
+                  escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
                   break;
                 case 3: /* SCP */
                   break;
