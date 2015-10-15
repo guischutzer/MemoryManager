@@ -5,3 +5,4 @@
 17 secproc 37 64 62 19 7 21 17 23 7 24 44 30
 27 ultproc 48 16 8 30 10 32 15 40 15 45
 30 voltproc 43 32
+49 vuashproc 50 256

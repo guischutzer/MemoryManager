@@ -154,7 +154,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                     if(fifoAux == fifoHead) fifoBux = fifoHead;
                     else fifoBux = fifoBux->prox;
                   }
-
+                  if(fifoTail == fifoAux) fifoTail = fifoBux;
                   if(fifoAux == fifoHead) fifoHead = fifoHead->prox;
                   else fifoBux->prox = fifoAux->prox;
                   free(fifoAux);
@@ -185,31 +185,23 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
         a = lista_proc[i].head;
         if(a != NULL){
           if(a->inst <= (int) ultime){
-            printf("página que eu quero acessar: %02d\n",lista_proc[i].init + a->pos);
             pagina = lista_pags[lista_proc[i].init + a->pos];
             if(lista_pags[lista_proc[i].init + a->pos].map == -1){ /* PageFault!! Chamamos algum algoritmo de substituicao*/
               switch(subst){
                 case 1: /* NRUP */
                   break;
                 case 2: /* FIFO */
-                  printf("PageFault!\n");
                   if (nframes == total){
-                    printf("Cheguei 0\n");
-                    printf("i: %d\n", i);
-
-                    if(fifoHead == NULL) printf("Aff...\n");
                     lista_pags[lista_proc[i].init + a->pos].map = lista_pags[fifoHead->pag].map;
                     lista_pags[fifoHead->pag].R = TRUE;
                     lista_pags[fifoHead->pag].map = -1;
                     lista_pags[fifoHead->pag].R = FALSE;
                     fifoHead->pag = lista_proc[i].init + a->pos;
 
-                    printf("Cheguei 1\n");
                     fifoTail->prox = fifoHead;
                     fifoTail = fifoHead;
                     fifoHead = fifoHead->prox;
                     fifoTail->prox = NULL;
-                    printf("Cheguei 2\n");
                   }
                   else{
                     for(j = 0; j < total && lista_frames[j] == TRUE; j++);
@@ -281,13 +273,13 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
             imprimeProc(lista_proc[i]);
             printf("\n");
           }
-          printf("\n");
+          printf("\n"); */
 
-          /*printf("Arquivo binario da memoria total: \n");
+          printf("Arquivo binario da memoria total: \n");
           imprimeBin(ftotal, total*16);
           printf("Arquivo binario da memoria virtual: \n");
           imprimeBin(fvirtual, virtual*16);
-          printf ("\n");*/
+          printf ("\n");
       }
 
     }
