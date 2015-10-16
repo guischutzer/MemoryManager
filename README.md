@@ -1,4 +1,4 @@
-# MemoryManager
+# MemoryManager v1.0
 
 ####MAC0422 - Sistemas Operacionais - IME-USP  
 ######EP2 - 05/10/2015
