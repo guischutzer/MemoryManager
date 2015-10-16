@@ -353,9 +353,51 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                 }
                 break;
               case 4: /* LRUP */
+              if(nframes == total){
+                  menor = 0;
+                  for(k = 0; k < total; k++)
+                    menor += matriz[0][k];
+                  menor_index = 0;
+
+                  for(j = 1; j < total; j++){
+                    linha = 0;
+                    for(k = 0; k < total; k++){
+                      linha += matriz[j][k];
+                    }
+                    if(linha < menor){
+                      menor_index = j;
+                      menor = linha;
+                    }
+                  }
+
+                  for(j = 0; j < virtual; j++){
+                    if(lista_pags[j].map == menor_index){
+                      lista_pags[j].map = -1;
+                      lista_pags[j].R = FALSE;
+                      lista_pags[lista_proc[i].init + a->pos].map = menor_index;
+                    }
+                  }
+                }
+                else{
+                  for(j = 0; j < total && lista_frames[j] != FALSE; j++);
+                  lista_frames[j] = TRUE;
+                  lista_pags[lista_proc[i].init + a->pos].map = j;
+                  nframes++;
+                }
                 break;
             }
             escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
+          }
+
+          /* não ocorre PageFault, atualizamos o bit R também */
+          lista_pags[lista_proc[i].init + a->pos].R = TRUE;
+
+          /* atualizamos a matriz de R no caso LRUP */
+          if(subst == 4){
+            for(j = 0; j < total; j++){
+              matriz[lista_pags[lista_proc[i].init + a->pos].map][j] = 1;
+              matriz[j][lista_pags[lista_proc[i].init + a->pos].map] = 0;
+            }
           }
 
           amorta = a;
