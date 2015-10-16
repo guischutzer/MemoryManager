@@ -1,0 +1,38 @@
+MAC0422 - Sistemas Operacionais - IME-USP
+EP2 - 16/10/2015
+
+Guilherme Souto Schützer - 8658544
+Tomás Marcondes Bezerra Paim - 7157602
+
+----------------------
+INSTRUÇÕES DE EXECUÇÃO
+----------------------
+
+# Compilar:
+[user@home/caminho/para/ep2-guilherme-tomas] $ make
+
+# Executar:
+[user@home/caminho/para/ep2-guilherme-tomas] $ ./ep2
+
+# Carregar a entrada (necessário para a execução; pode ser usado mais de uma vez, o que sobrescreve a lista de processos antiga com a nova):
+[ep2]: carrega <caminho e nome do arquivo>
+
+# Imprimir a lista de processos carregada:
+[ep2]: imprime
+
+# Escolher o algoritmo de Fit (FirstFit, NextFit e QuickFit):
+[ep2]: espaco <número (1 a 3)>
+
+# Escolher o algoritmo de substituição de página (NRUP, FIFO, SCUP, LRUP):
+[ep2]: substitui <número (1 a 4)>
+
+# Para executar a simulação com os algoritmos escolhidos (default: FirstFit e NRUP); especificar o intervalo em segundos (inteiro) em que deve ocorrer a impressão do estado da memória (default == 1):
+[ep2] executa <inteiro>
+
+# Abrir o diálogo de ajuda:
+[ep2]: <qualquer outra string>
+
+### Cuidado! Por algum motivo, teclar enter sem nenhum input dá SegFault, o que não ocorria no EP1. Portanto, não deve ser feito. ###
+
+# Encerrar a execução:
+[ep2]: sai
