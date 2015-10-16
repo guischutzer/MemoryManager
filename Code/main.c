@@ -33,7 +33,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   double totime, ultime = -1;
   int proc_fim = 0, proc_ini = 0;
   int nframes = 0;
-  int i, j, k, menor, linha, menor_index, qtyR = 0;
+  int i, j, k, l, menor, linha, menor_index, qtyR = 0;
 
   if (fit == 0) fit = 1;
   if (subst == 0) subst = 4;
@@ -359,8 +359,10 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
                   for(j = 1; j < total; j++){
                     linha = 0;
-                    for(k = 0; k < total; k++){
-                      linha += matriz[j][k];
+                    l = 1;
+                    for(k = total-1; k >= 0; k--){
+                      linha += matriz[j][k] * l;
+                      l *= 2;
                     }
                     if(linha < menor){
                       menor_index = j;
