@@ -112,6 +112,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
       /* zera os bits R de cada pagina no intervalo de segundos definido por RESETR */
       if((int) ultime % RESETR == 0){
+        qtyR = 0;
         for(i = 0; i < virtual; i++)
           lista_pags[i].R = 0;
       }
@@ -387,6 +388,10 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
             }
             escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
           }
+          else{ 
+          	if (lista_pags[lista_proc[i].init + a->pos].R == 0) qtyR++;
+          	lista_pags[lista_proc[i].init + a->pos].R = 1;
+        	}
 
           /* não ocorre PageFault, atualizamos o bit R também */
           lista_pags[lista_proc[i].init + a->pos].R = TRUE;
@@ -409,6 +414,22 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
       /* imprime estado da memoria de acordo com o intervalo especificado */
       if ((int) ultime % intv == 0){
           printf("Instante atual: %d\n", (int) ultime);
+
+         /*  printf("Paginas (memoria virtual):\n");
+          imprimePags(lista_pags, virtual);
+          printf("Quadros (memoria fisica):\n");
+          imprimeFrames(lista_frames, total);
+
+          imprimeFifo(fifoHead);
+          printf("qtyR = %d\n", qtyR);
+
+          /* for(i = 0; i < nproc; i++){
+            imprimeProc(lista_proc[i]);
+            printf("\n");
+          }
+          printf("\n"); */
+
+          
           printf("Arquivo binario da memoria total: \n");
           imprimeBin(ftotal, total*16);
           printf("Arquivo binario da memoria virtual: \n");
@@ -448,8 +469,8 @@ int main(){
 
     add_history(input);
     argv = tokenize(input);
-    free(input);
-    input = NULL;
+    /* free(input);
+    input = NULL; */
 
   	if (strcmp(argv[0], "carrega") == 0) {
     	if(lista_proc != NULL)
