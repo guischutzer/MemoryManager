@@ -68,7 +68,7 @@ void imprimeMatriz(int **matriz, int total){
   int i, j;
 
   printf("Matriz:\n");
-  printf("   ");
+  printf(" \\ ");
   for(i = 0; i < total; i++)
     printf("%d ", i);
   printf("\n");
