@@ -415,7 +415,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
       if ((int) ultime % intv == 0){
           printf("Instante atual: %d\n", (int) ultime);
 
-          printf("Paginas (memoria virtual):\n");
+         /*  printf("Paginas (memoria virtual):\n");
           imprimePags(lista_pags, virtual);
           printf("Quadros (memoria fisica):\n");
           imprimeFrames(lista_frames, total);
@@ -430,13 +430,13 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
           printf("\n"); */
 
           
-          /* printf("Arquivo binario da memoria total: \n");
+          printf("Arquivo binario da memoria total: \n");
           imprimeBin(ftotal, total*16);
           printf("Arquivo binario da memoria virtual: \n");
           imprimeBin(fvirtual, virtual*16);
           printf("Estado da lista de memoria: \n");
           imprimeNode(headvirt);
-          printf("\n"); */
+          printf("\n");
       }
     }
   }
