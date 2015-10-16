@@ -18,7 +18,6 @@ Tomas Marcondes Bezerra Paim - 7157602
 #include <readline/history.h>
 #include "utils.h"
 #include "fit.h"
-#include "page.h"
 #include "io.h"
 
 void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int virtual, int nproc, int fit, int subst, int intv){
@@ -409,23 +408,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
       /* imprime estado da memoria de acordo com o intervalo especificado */
       if ((int) ultime % intv == 0){
-
           printf("Instante atual: %d\n", (int) ultime);
-
-          /* printf("Paginas (memoria virtual):\n");
-          imprimePags(lista_pags, virtual);
-          printf("Quadros (memoria fisica):\n");
-          imprimeFrames(lista_frames, total);
-
-          imprimeFifo(fifoHead); */
-
-          /* for(i = 0; i < nproc; i++){
-            imprimeProc(lista_proc[i]);
-            printf("\n");
-          }
-          printf("\n"); */
-
-
           printf("Arquivo binario da memoria total: \n");
           imprimeBin(ftotal, total*16);
           printf("Arquivo binario da memoria virtual: \n");
@@ -433,11 +416,8 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
           printf("Estado da lista de memoria: \n");
           imprimeNode(headvirt);
           printf("\n");
-
       }
-
     }
-
   }
   printf ("Simulacao terminada no instante %d\n", (int) ultime);
   if(lista_pags != NULL) free(lista_pags);
@@ -465,31 +445,25 @@ int main(){
 
     snprintf(shell_prompt, sizeof(shell_prompt), "[ep2]: ");
     input = readline(shell_prompt);
-    add_history(input);
-  	argv = tokenize(input);
 
-    /* lista_proc = carrega("../Test/entrada3.txt", &total, &virtual, &nproc);
-    printf("total = %d, virtual = %d.\n", total, virtual);
-    printf("numero de processos = %d.\n", nproc);
-    if(lista_proc == NULL && nproc > 0){
-      printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
-      return 1;
-    }
-    procs = 1; */
+    add_history(input);
+    argv = tokenize(input);
+    free(input);
+    input = NULL;
 
   	if (strcmp(argv[0], "carrega") == 0) {
-  		printf("Modo carrega.\n");
     	if(lista_proc != NULL)
       	 liberaListaProcessos(lista_proc, nproc);
 
       lista_proc = carrega(argv[1], &total, &virtual, &nproc);
-      if(lista_proc == NULL && nproc > 0){
-      	printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
-      	return 1;
+      if(nproc <= 0){
+      	printf("ERRO: Nenhum processo carregado. Carregue outro arquivo.\n");
+        free(lista_proc);
+        lista_proc = NULL;
       }
-      printf("Arquivo %s carregado com sucesso.\n", argv[1]);
+      else if(lista_proc != NULL)
+        printf("Arquivo %s carregado com sucesso.\n", argv[1]);
   	}
-
     else if (strcmp(argv[0], "imprime") == 0){
       if (lista_proc != NULL){
         for (i = 0; i < nproc; i++)
@@ -512,7 +486,6 @@ int main(){
   				break;
   			default :
   				printf("Comando desconhecido. Por favor insira outro comando.\n");
-  				fit = 0;
   				break;
   		}
   	}
@@ -537,17 +510,14 @@ int main(){
   				break;
   		}
   	}
-
-  	else if (strcmp(argv[0], "imprime") == 0) {
+    else if (strcmp(argv[0], "imprime") == 0) {
   		if (lista_proc != NULL){
   			for (i = 0; i < nproc; i++)
         		imprimeProc(lista_proc[i]);
   		}
   		else printf("Carregue um arquivo para imprimir.\n");
   	}
-
-  	else if (strcmp(argv[0], "executa") == 0) {
-
+    else if (strcmp(argv[0], "executa") == 0) {
       if(executou == TRUE){
         liberaListaProcessos(lista_proc, nproc);
         lista_proc = carrega(argv[1], &total, &virtual, &nproc);
@@ -583,8 +553,7 @@ int main(){
       executa(lista_proc, ftotal, fvirtual, total, virtual, nproc, fit, subst, intv);
       executou = TRUE;
   	}
-
-  	else if (strcmp(argv[0], "sai") == 0) {
+    else if (strcmp(argv[0], "sai") == 0) {
   		printf("Adeus.\n");
   		break;
   	}
@@ -598,20 +567,27 @@ int main(){
 			printf("executa <inteiro> -- executa o metodo selecionado com a entrada carregada; opcional: número de segundos para imprimir o estado dos arquivos (default = 1)\n");
 			printf("sai               -- encerra o programa\n");
 		}
+
+    if(argv != NULL){
+      free(argv);
+      argv = NULL;
+    }
   }
 
-  if(lista_proc != NULL){
-      liberaListaProcessos(lista_proc, nproc);
-  }
+  if(lista_proc != NULL)
+    liberaListaProcessos(lista_proc, nproc);
 
-  if (argv != NULL)
+  if(input != NULL)
+    free(input);
+
+  if(argv != NULL)
   	free(argv);
 
-  if (ftotal != NULL)
-  	free(ftotal);
+  if(ftotal != NULL)
+  	fclose(ftotal);
 
-  if (fvirtual != NULL)
-  	free(fvirtual);
+  if(fvirtual != NULL)
+  	fclose(fvirtual);
 
   return 0;
 }
