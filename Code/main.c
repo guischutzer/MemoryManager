@@ -29,14 +29,15 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   Processo p;
 
   int *lista_frames = NULL;
+  int **matriz = NULL;
   struct timeval tv, inicio, fim;
   double totime, ultime = -1;
   int proc_fim = 0, proc_ini = 0;
   int nframes = 0;
-  int i, j, qtyR = 0;
+  int i, j, k, menor, linha, menor_index, qtyR = 0;
 
   if (fit == 0) fit = 1;
-  if (subst == 0) subst = 1;
+  if (subst == 0) subst = 4;
 
   if(lista_proc == NULL) {
     printf("Carregue um arquivo para executar.\n");
@@ -73,6 +74,16 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 		headquick[i] = headvirt;
 	}
 
+  if(subst == 4){
+    matriz = malloc((total) * sizeof(int*));
+    for(i = 0; i < total; i++){
+      matriz[i] = malloc((total) * sizeof(int));
+      for(j = 0; j < total; j++){
+        matriz[i][j] = 0;
+      }
+    }
+  }
+
   lista_pags = malloc((virtual) * sizeof(Page));
   for(i = 0; i < virtual; i++){
     lista_pags[i].pid = -1;
@@ -97,6 +108,9 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
     /* a cada 1 segundo */
     if(totime != ultime){
+
+      if(subst == 4) imprimeMatriz(matriz, total);
+
 			ultime = totime;
 
       /* zera os bits R de cada pagina no intervalo de segundos definido por RESETR */
@@ -155,11 +169,9 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
               lista_frames[lista_pags[p.init + j].map] = 0;
               switch(subst){
                 case 1: /* NRUP */
-                  if(lista_pags[p.init + j].R)
-                    qtyR--;
+                  if(lista_pags[p.init + j].R) qtyR--;
                   break;
                 case 2: /* FIFO */
-
                   for(fifoAux = fifoHead; fifoAux->pag != p.init + j; fifoAux = fifoAux->prox){
                     if(fifoAux == fifoHead) fifoBux = fifoHead;
                     else fifoBux = fifoBux->prox;
@@ -181,6 +193,8 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                   free(fifoAux);
                   break;
                 case 4: /* LRUP */
+                  for(k = 0; k < total; k++)
+                    matriz[lista_pags[p.init + j].map][k] = 0;
                   break;
               }
               nframes--;
@@ -230,7 +244,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                       for(j = 0; j < virtual; j++){
                         if(lista_pags[j].map != -1){
                           lista_pags[lista_proc[i].init + a->pos].map = lista_pags[j].map;
-                          lista_pags[lista_proc[i].init + a->pos].R = 1;
                           lista_pags[j].map = -1;
                           lista_pags[j].R = 0;
                           break;
@@ -241,7 +254,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                       for(j = 0; j < virtual; j++){
                         if(lista_pags[j].map != -1 && lista_pags[j].R == FALSE){
                           lista_pags[lista_proc[i].init + a->pos].map = lista_pags[j].map;
-                          lista_pags[lista_proc[i].init + a->pos].R = 1;
                           lista_pags[j].map = -1;
                           lista_pags[j].R = 0;
                           qtyR++;
@@ -254,7 +266,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                     for(j = 0; j < total && lista_frames[j] == TRUE; j++);
                     lista_frames[j] = TRUE;
                     lista_pags[lista_proc[i].init + a->pos].map = j;
-                    lista_pags[lista_proc[i].init + a->pos].R = TRUE;
                     nframes++;
                     qtyR++;
                   }
@@ -276,7 +287,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                     for(j = 0; j < total && lista_frames[j] == TRUE; j++);
                     lista_frames[j] = TRUE;
                     lista_pags[lista_proc[i].init + a->pos].map = j;
-                    lista_pags[lista_proc[i].init + a->pos].R = TRUE;
                     nframes++;
                     if(fifoHead == NULL){
                       fifoHead = malloc(sizeof(FifoPage));
@@ -316,7 +326,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                     for(j = 0; j < total && lista_frames[j] == TRUE; j++);
                     lista_frames[j] = TRUE;
                     lista_pags[lista_proc[i].init + a->pos].map = j;
-                    lista_pags[lista_proc[i].init + a->pos].R = TRUE;
                     nframes++;
                     if(fifoHead == NULL){
                       fifoHead = malloc(sizeof(FifoPage));
@@ -333,9 +342,51 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                   }
                   break;
                 case 4: /* LRUP */
+                  if(nframes == total){
+                    menor = 0;
+                    for(k = 0; k < total; k++)
+                      menor += matriz[0][k];
+                    menor_index = 0;
+
+                    for(j = 1; j < total; j++){
+                      linha = 0;
+                      for(k = 0; k < total; k++){
+                        linha += matriz[j][k];
+                      }
+                      if(linha < menor){
+                        menor_index = j;
+                        menor = linha;
+                      }
+                    }
+
+                    for(j = 0; j < virtual; j++){
+                      if(lista_pags[j].map == menor_index){
+                        lista_pags[j].map = -1;
+                        lista_pags[j].R = FALSE;
+                        lista_pags[lista_proc[i].init + a->pos].map = menor_index;
+                      }
+                    }
+                  }
+                  else{
+                    for(j = 0; j < total && lista_frames[j] != FALSE; j++);
+                    lista_frames[j] = TRUE;
+                    lista_pags[lista_proc[i].init + a->pos].map = j;
+                    nframes++;
+                  }
+
                   break;
               }
               escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
+            }
+            /* não ocorre PageFault, atualizamos o bit R também */
+            lista_pags[lista_proc[i].init + a->pos].R = TRUE;
+
+            /* atualizamos a matriz de R no caso LRUP */
+            if(subst == 4){
+              for(j = 0; j < total; j++){
+                matriz[lista_pags[lista_proc[i].init + a->pos].map][j] = 1;
+                matriz[j][lista_pags[lista_proc[i].init + a->pos].map] = 0;
+              }
             }
 
             amorta = a;
@@ -377,6 +428,10 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   if(lista_pags != NULL) free(lista_pags);
   if(lista_frames != NULL) free(lista_frames);
   if(headquick != NULL) free(headquick);
+  if(matriz != NULL){
+    for(i = 0; i < total; i++) free(matriz[i]);
+    free(matriz);
+  }
 }
 
 int main(){
@@ -384,7 +439,8 @@ int main(){
   char** argv = NULL;
   int subst = 0, fit = 0, nproc = 0, intv = 0;
   int total = 0, virtual = 0;
-  int i = 0, procs = 0;
+  int i = 0;
+  int executou = FALSE;
   FILE *ftotal = NULL, *fvirtual = NULL;
   Processo *lista_proc = NULL;
 
@@ -398,13 +454,10 @@ int main(){
   	argv = tokenize(input);
 
     lista_proc = carrega("../Test/entrada3.txt", &total, &virtual, &nproc);
-    printf("total = %d, virtual = %d.\n", total, virtual);
-    printf("numero de processos = %d.\n", nproc);
     if(lista_proc == NULL && nproc > 0){
       printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
       return 1;
     }
-    procs = 1;
 
   	if (strcmp(argv[0], "carrega") == 0) {
   		printf("Modo carrega.\n");
@@ -412,14 +465,13 @@ int main(){
       	 liberaListaProcessos(lista_proc, nproc);
 
       lista_proc = carrega(argv[1], &total, &virtual, &nproc);
-      printf("total = %d, virtual = %d.\n", total, virtual);
-      printf("numero de processos = %d.\n", nproc);
       if(lista_proc == NULL && nproc > 0){
       	printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
       	return 1;
       }
-      procs = 1;
+      printf("Arquivo %s carregado com sucesso.\n", argv[1]);
   	}
+
     else if (strcmp(argv[0], "imprime") == 0){
       if (lista_proc != NULL){
         for (i = 0; i < nproc; i++)
@@ -477,6 +529,13 @@ int main(){
   	}
 
   	else if (strcmp(argv[0], "executa") == 0) {
+
+      if(executou == TRUE){
+        liberaListaProcessos(lista_proc, nproc);
+        lista_proc = carrega(argv[1], &total, &virtual, &nproc);
+        executou = FALSE;
+      }
+
   		if (argv[1] != NULL){
   			intv = atoi(argv[1]);
   			printf("Intervalo definido como %d.\n", intv);
@@ -504,6 +563,7 @@ int main(){
 
 			escreveBin(-1, fvirtual, 0, virtual);
       executa(lista_proc, ftotal, fvirtual, total, virtual, nproc, fit, subst, intv);
+      executou = TRUE;
   	}
 
   	else if (strcmp(argv[0], "sai") == 0) {
@@ -522,7 +582,7 @@ int main(){
 		}
   }
 
-  if(procs == 1){
+  if(lista_proc != NULL){
       liberaListaProcessos(lista_proc, nproc);
   }
 
