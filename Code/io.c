@@ -49,24 +49,6 @@ void escreveBin(char pid, FILE* arquivo, int origem, int pags){
 		fwrite(&pid, sizeof(pid), 1, arquivo);
 }
 
-void imprimeMatriz(int **matriz, int total){
-  int i, j;
-
-  printf("Matriz:\n");
-  printf(" \\ ");
-  for(i = 0; i < total; i++)
-    printf("%d ", i);
-  printf("\n");
-  for(i = 0; i < total; i++){
-    printf("%2d ", i);
-    for(j = 0; j < total; j++){
-      printf("%d ", matriz[i][j]);
-    }
-    printf("\n");
-  }
-  printf("\n");
-}
-
 void imprimePags(Page* lista, int tamanho){
   int i;
   printf("NO. PAG  [PID|POS|MAP|  R]\n");
