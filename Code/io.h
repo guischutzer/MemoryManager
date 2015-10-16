@@ -5,8 +5,6 @@ Processo inputProcesso(char* linha);
 
 void imprimeNode(Node* head);
 
-void imprimeMatriz(int **matriz, int total);
-
 void escreveBin(char pid, FILE* arquivo, int origem, int pags);
 
 void imprimeProc (Processo proc);

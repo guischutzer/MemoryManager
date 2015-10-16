@@ -117,8 +117,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
           lista_pags[i].R = 0;
       }
 
-      if(subst == 4) imprimeMatriz(matriz, total);
-
       /* Checa quais processos ja terminaram */
       for(i = 0; i < proc_ini; i++){
         if(lista_proc[i].tf == (int) ultime && lista_proc[i].init >= 0){
@@ -212,7 +210,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
       }
 
       /* aloca memoria para os novos processos */
-      while(lista_proc[proc_ini].t0 == ultime){
+      while(lista_proc[proc_ini].t0 == ultime && proc_ini < nproc){
         switch(fit){
         	case 1: /* FirstFit */
             lista_proc[proc_ini].init = firstFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
@@ -388,7 +386,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
             }
             escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
           }
-          else{ 
+          else{
           	if (lista_pags[lista_proc[i].init + a->pos].R == 0) qtyR++;
           	lista_pags[lista_proc[i].init + a->pos].R = 1;
         	}
@@ -415,21 +413,11 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
       if ((int) ultime % intv == 0){
           printf("Instante atual: %d\n", (int) ultime);
 
-         /*  printf("Paginas (memoria virtual):\n");
+          /*printf("Paginas (memoria virtual):\n");
           imprimePags(lista_pags, virtual);
           printf("Quadros (memoria fisica):\n");
-          imprimeFrames(lista_frames, total);
+          imprimeFrames(lista_frames, total);*/
 
-          imprimeFifo(fifoHead);
-          printf("qtyR = %d\n", qtyR);
-
-          /* for(i = 0; i < nproc; i++){
-            imprimeProc(lista_proc[i]);
-            printf("\n");
-          }
-          printf("\n"); */
-
-          
           printf("Arquivo binario da memoria total: \n");
           imprimeBin(ftotal, total*16);
           printf("Arquivo binario da memoria virtual: \n");
@@ -437,6 +425,8 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
           printf("Estado da lista de memoria: \n");
           imprimeNode(headvirt);
           printf("\n");
+
+
       }
     }
   }
