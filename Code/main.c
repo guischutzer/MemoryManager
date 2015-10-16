@@ -171,6 +171,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                 case 1: /* NRUP */
                   if(lista_pags[p.init + j].R) qtyR--;
                   break;
+
                 case 2: /* FIFO */
                   for(fifoAux = fifoHead; fifoAux->pag != p.init + j; fifoAux = fifoAux->prox){
                     if(fifoAux == fifoHead) fifoBux = fifoHead;
@@ -181,6 +182,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                   else fifoBux->prox = fifoAux->prox;
                   free(fifoAux);
                   break;
+
                 case 3: /* SCP */
 
                   for(fifoAux = fifoHead; fifoAux->pag != p.init + j; fifoAux = fifoAux->prox){
@@ -215,9 +217,11 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
         	case 1: /* FirstFit */
             lista_proc[proc_ini].init = firstFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
             break;
+
 		      case 2: /* NextFit */
             lista_proc[proc_ini].init = nextFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
             break;
+
           case 3: /* QuickFit*/
             lista_proc[proc_ini].init = quickFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headquick, virtual);
             break;
@@ -234,165 +238,130 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
       /* percorre listas de acessos e checa quais devem ser feitos */
       for(i = 0; i < proc_ini; i++){
         a = lista_proc[i].head;
-        if(a != NULL){
-          if(a->inst <= (int) ultime){
-            if(lista_pags[lista_proc[i].init + a->pos].map == -1){ /* PageFault!! Chamamos algum algoritmo de substituicao*/
-              switch(subst){
-                case 1: /* NRUP */
-                  if(nframes == total){
-                    if(qtyR == total){
-                      for(j = 0; j < virtual; j++){
-                        if(lista_pags[j].map != -1){
-                          lista_pags[lista_proc[i].init + a->pos].map = lista_pags[j].map;
-                          lista_pags[j].map = -1;
-                          lista_pags[j].R = 0;
-                          break;
-                        }
-                      }
-                    }
-                    else{
-                      for(j = 0; j < virtual; j++){
-                        if(lista_pags[j].map != -1 && lista_pags[j].R == FALSE){
-                          lista_pags[lista_proc[i].init + a->pos].map = lista_pags[j].map;
-                          lista_pags[j].map = -1;
-                          lista_pags[j].R = 0;
-                          qtyR++;
-                          break;
-                        }
-                      }
-                    }
-                  }
-                  else{
-                    for(j = 0; j < total && lista_frames[j] == TRUE; j++);
-                    lista_frames[j] = TRUE;
-                    lista_pags[lista_proc[i].init + a->pos].map = j;
-                    nframes++;
-                    qtyR++;
-                  }
-                  break;
-                case 2: /* FIFO */
-                  if (nframes == total){
-                    lista_pags[lista_proc[i].init + a->pos].map = lista_pags[fifoHead->pag].map;
-                    lista_pags[fifoHead->pag].R = TRUE;
-                    lista_pags[fifoHead->pag].map = -1;
-                    lista_pags[fifoHead->pag].R = FALSE;
-                    fifoHead->pag = lista_proc[i].init + a->pos;
 
-                    fifoTail->prox = fifoHead;
-                    fifoTail = fifoHead;
-                    fifoHead = fifoHead->prox;
-                    fifoTail->prox = NULL;
-                  }
-                  else{
-                    for(j = 0; j < total && lista_frames[j] == TRUE; j++);
-                    lista_frames[j] = TRUE;
-                    lista_pags[lista_proc[i].init + a->pos].map = j;
-                    nframes++;
-                    if(fifoHead == NULL){
-                      fifoHead = malloc(sizeof(FifoPage));
-                      fifoHead->prox = NULL;
-                      fifoHead->pag = lista_proc[i].init + a->pos;
-                      fifoTail = fifoHead;
-                    }
-                    else{
-                      fifoTail->prox = malloc(sizeof(FifoPage));
-                      fifoTail = fifoTail->prox;
-                      fifoTail->pag = lista_proc[i].init + a->pos;
-                      fifoTail->prox = NULL;
-                    }
-                  }
-                  break;
-                case 3: /* SCP */
-                  if (nframes == total){
-                    while(lista_pags[fifoHead->pag].R == TRUE){
-                    	lista_pags[fifoHead->pag].R = FALSE;
-                    	fifoTail->prox = fifoHead;
-                    	fifoTail = fifoHead;
-                    	fifoHead = fifoHead->prox;
-                    	fifoTail->prox = NULL;
-                    }
-                    lista_pags[lista_proc[i].init + a->pos].map = lista_pags[fifoHead->pag].map;
-                    lista_pags[fifoHead->pag].R = TRUE;
-                    lista_pags[fifoHead->pag].map = -1;
-                    lista_pags[fifoHead->pag].R = FALSE;
-                    fifoHead->pag = lista_proc[i].init + a->pos;
-
-                    fifoTail->prox = fifoHead;
-                    fifoTail = fifoHead;
-                    fifoHead = fifoHead->prox;
-                    fifoTail->prox = NULL;
-                  }
-                  else{
-                    for(j = 0; j < total && lista_frames[j] == TRUE; j++);
-                    lista_frames[j] = TRUE;
-                    lista_pags[lista_proc[i].init + a->pos].map = j;
-                    nframes++;
-                    if(fifoHead == NULL){
-                      fifoHead = malloc(sizeof(FifoPage));
-                      fifoHead->prox = NULL;
-                      fifoHead->pag = lista_proc[i].init + a->pos;
-                      fifoTail = fifoHead;
-                    }
-                    else{
-                      fifoTail->prox = malloc(sizeof(FifoPage));
-                      fifoTail = fifoTail->prox;
-                      fifoTail->pag = lista_proc[i].init + a->pos;
-                      fifoTail->prox = NULL;
-                    }
-                  }
-                  break;
-                case 4: /* LRUP */
-                  if(nframes == total){
-                    menor = 0;
-                    for(k = 0; k < total; k++)
-                      menor += matriz[0][k];
-                    menor_index = 0;
-
-                    for(j = 1; j < total; j++){
-                      linha = 0;
-                      for(k = 0; k < total; k++){
-                        linha += matriz[j][k];
-                      }
-                      if(linha < menor){
-                        menor_index = j;
-                        menor = linha;
-                      }
-                    }
-
+        while ((a != NULL) && (a->inst <= (int) ultime)){
+          if(lista_pags[lista_proc[i].init + a->pos].map == -1){ /* PageFault!! Chamamos algum algoritmo de substituicao*/
+            switch(subst){
+              case 1: /* NRUP */
+                if(nframes == total){
+                  if(qtyR == total){
                     for(j = 0; j < virtual; j++){
-                      if(lista_pags[j].map == menor_index){
+                      if(lista_pags[j].map != -1){
+                        lista_pags[lista_proc[i].init + a->pos].map = lista_pags[j].map;
+                        lista_pags[lista_proc[i].init + a->pos].R = 1;
                         lista_pags[j].map = -1;
-                        lista_pags[j].R = FALSE;
-                        lista_pags[lista_proc[i].init + a->pos].map = menor_index;
+                        lista_pags[j].R = 0;
+                        break;
                       }
                     }
                   }
                   else{
-                    for(j = 0; j < total && lista_frames[j] != FALSE; j++);
-                    lista_frames[j] = TRUE;
-                    lista_pags[lista_proc[i].init + a->pos].map = j;
-                    nframes++;
+                    for(j = 0; j < virtual; j++){
+                      if(lista_pags[j].map != -1 && lista_pags[j].R == FALSE){
+                        lista_pags[lista_proc[i].init + a->pos].map = lista_pags[j].map;
+                        lista_pags[lista_proc[i].init + a->pos].R = 1;
+                        lista_pags[j].map = -1;
+                        lista_pags[j].R = 0;
+                        qtyR++;
+                        break;
+                      }
+                    }
                   }
+                }
+                else{
+                  for(j = 0; j < total && lista_frames[j] == TRUE; j++);
+                  lista_frames[j] = TRUE;
+                  lista_pags[lista_proc[i].init + a->pos].map = j;
+                  lista_pags[lista_proc[i].init + a->pos].R = TRUE;
+                  nframes++;
+                  qtyR++;
+                }
+                break;
 
-                  break;
-              }
-              escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
-            }
-            /* não ocorre PageFault, atualizamos o bit R também */
-            lista_pags[lista_proc[i].init + a->pos].R = TRUE;
+              case 2: /* FIFO */
+                if (nframes == total){
+                  lista_pags[lista_proc[i].init + a->pos].map = lista_pags[fifoHead->pag].map;
+                  lista_pags[fifoHead->pag].R = TRUE;
+                  lista_pags[fifoHead->pag].map = -1;
+                  lista_pags[fifoHead->pag].R = FALSE;
+                  fifoHead->pag = lista_proc[i].init + a->pos;
 
-            /* atualizamos a matriz de R no caso LRUP */
-            if(subst == 4){
-              for(j = 0; j < total; j++){
-                matriz[lista_pags[lista_proc[i].init + a->pos].map][j] = 1;
-                matriz[j][lista_pags[lista_proc[i].init + a->pos].map] = 0;
-              }
-            }
+                  fifoTail->prox = fifoHead;
+                  fifoTail = fifoHead;
+                  fifoHead = fifoHead->prox;
+                  fifoTail->prox = NULL;
+                }
+                else{
+                  for(j = 0; j < total && lista_frames[j] == TRUE; j++);
+                  lista_frames[j] = TRUE;
+                  lista_pags[lista_proc[i].init + a->pos].map = j;
+                  lista_pags[lista_proc[i].init + a->pos].R = TRUE;
+                  nframes++;
+                  if(fifoHead == NULL){
+                    fifoHead = malloc(sizeof(FifoPage));
+                    fifoHead->prox = NULL;
+                    fifoHead->pag = lista_proc[i].init + a->pos;
+                    fifoTail = fifoHead;
+                  }
+                  else{
+                    fifoTail->prox = malloc(sizeof(FifoPage));
+                    fifoTail = fifoTail->prox;
+                    fifoTail->pag = lista_proc[i].init + a->pos;
+                    fifoTail->prox = NULL;
+                  }
+                }
+                break;
 
-            amorta = a;
-            lista_proc[i].head = lista_proc[i].head->prox;
-            free(amorta);
+              case 3: /* SCP */
+                if (nframes == total){
+                  while(lista_pags[fifoHead->pag].R == TRUE){
+                  	lista_pags[fifoHead->pag].R = FALSE;
+                  	fifoTail->prox = fifoHead;
+                  	fifoTail = fifoHead;
+                  	fifoHead = fifoHead->prox;
+                  	fifoTail->prox = NULL;
+                  }
+                  lista_pags[lista_proc[i].init + a->pos].map = lista_pags[fifoHead->pag].map;
+                  lista_pags[fifoHead->pag].R = TRUE;
+                  lista_pags[fifoHead->pag].map = -1;
+                  lista_pags[fifoHead->pag].R = FALSE;
+                  fifoHead->pag = lista_proc[i].init + a->pos;
+
+                  fifoTail->prox = fifoHead;
+                  fifoTail = fifoHead;
+                  fifoHead = fifoHead->prox;
+                  fifoTail->prox = NULL;
+                }
+                else{
+                  for(j = 0; j < total && lista_frames[j] == TRUE; j++);
+                  lista_frames[j] = TRUE;
+                  lista_pags[lista_proc[i].init + a->pos].map = j;
+                  lista_pags[lista_proc[i].init + a->pos].R = TRUE;
+                  nframes++;
+                  if(fifoHead == NULL){
+                    fifoHead = malloc(sizeof(FifoPage));
+                    fifoHead->prox = NULL;
+                    fifoHead->pag = lista_proc[i].init + a->pos;
+                    fifoTail = fifoHead;
+                  }
+                  else{
+                    fifoTail->prox = malloc(sizeof(FifoPage));
+                    fifoTail = fifoTail->prox;
+                    fifoTail->pag = lista_proc[i].init + a->pos;
+                    fifoTail->prox = NULL;
+                  }
+                }
+                break;
+              case 4: /* LRUP */
+                break;
             }
+            escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
+          }
+
+          amorta = a;
+          lista_proc[i].head = lista_proc[i].head->prox;
+          free(amorta);
+          a = lista_proc[i].head;
         }
       }
 
@@ -401,24 +370,28 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
           printf("Instante atual: %d\n", (int) ultime);
 
-          /*printf("Paginas (memoria virtual):\n");
+          /* printf("Paginas (memoria virtual):\n");
           imprimePags(lista_pags, virtual);
           printf("Quadros (memoria fisica):\n");
           imprimeFrames(lista_frames, total);
 
-          imprimeFifo(fifoHead);
+          imprimeFifo(fifoHead); */
 
-          for(i = 0; i < nproc; i++){
+          /* for(i = 0; i < nproc; i++){
             imprimeProc(lista_proc[i]);
             printf("\n");
           }
           printf("\n"); */
 
+
           printf("Arquivo binario da memoria total: \n");
           imprimeBin(ftotal, total*16);
           printf("Arquivo binario da memoria virtual: \n");
           imprimeBin(fvirtual, virtual*16);
-          printf ("\n");
+          printf("Estado da lista de memoria: \n");
+          imprimeNode(headvirt);
+          printf("\n");
+
       }
 
     }
@@ -453,11 +426,14 @@ int main(){
     add_history(input);
   	argv = tokenize(input);
 
-    lista_proc = carrega("../Test/entrada3.txt", &total, &virtual, &nproc);
+    /* lista_proc = carrega("../Test/entrada3.txt", &total, &virtual, &nproc);
+    printf("total = %d, virtual = %d.\n", total, virtual);
+    printf("numero de processos = %d.\n", nproc);
     if(lista_proc == NULL && nproc > 0){
       printf("ERRO: Nenhum dos processos foi armazenado corretamente.\n");
       return 1;
     }
+    procs = 1; */
 
   	if (strcmp(argv[0], "carrega") == 0) {
   		printf("Modo carrega.\n");
