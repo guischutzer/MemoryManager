@@ -5,7 +5,7 @@ MAC0422 - Sistemas Operacionais
     EP2 - 05/10/2015
 
 Guilherme Souto Schützer     - 8658544
-Tomás Marcondes Bezerra Paim - 7157602
+Tomas Marcondes Bezerra Paim - 7157602
 
 */
 
@@ -66,10 +66,10 @@ void escreveBin(char pid, FILE* arquivo, int origem, int pags){
 
 void imprimePags(Page* lista, int tamanho){
   int i;
-  printf("NO. PAG  [PID|POS|MAP]\n");
+  printf("NO. PAG  [PID|POS|MAP|  R]\n");
   printf("----------------------\n");
   for(i = 0; i < tamanho; i++){
-    printf("pag %02d   [%3d|%3d|%3d]\n", i, lista[i].pid, lista[i].pos, lista[i].map);
+    printf("pag %02d   [%3d|%3d|%3d|%3d]\n", i, lista[i].pid, lista[i].pos, lista[i].map, lista[i].R);
   }
   printf("\n");
 }
@@ -148,12 +148,12 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
 
   a = fopen(nome, "r");
   if (a == NULL){
-    printf("ERRO: arquivo %s não encontrado.\n", nome);
+    printf("ERRO: arquivo %s nao encontrado.\n", nome);
     return NULL;
   }
   b = fopen(nome, "r");
   if (b == NULL){
-    printf("ERRO: arquivo %s não encontrado.\n", nome);
+    printf("ERRO: arquivo %s nao encontrado.\n", nome);
     return NULL;
   }
 
@@ -165,8 +165,7 @@ Processo* carrega(char* nome, int* total, int* virtual, int* nproc) {
   if (tokens != NULL)
     free(tokens);
 
-  for(nprocloc = 0; fgets(linha, MAXCHAR, a); nprocloc++)
-    printf("nproc = %d.\n", nprocloc);
+  for(nprocloc = 0; fgets(linha, MAXCHAR, a); nprocloc++);
 
   lista_proc = malloc(nprocloc * sizeof(Processo));
   if(lista_proc == NULL)

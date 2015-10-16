@@ -4,9 +4,11 @@ MAC0422 - Sistemas Operacionais
     EP2 - 05/10/2015
 
 Guilherme Souto Schützer     - 8658544
-Tomás Marcondes Bezerra Paim - 7157602
+Tomas Marcondes Bezerra Paim - 7157602
 
 */
+
+#define RESETR 10
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,26 +22,21 @@ Tomás Marcondes Bezerra Paim - 7157602
 #include "io.h"
 
 void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int virtual, int nproc, int fit, int subst, int intv){
-  Node *aux = NULL, *headtot, *headvirt, **headquick;
+  Node *aux = NULL, *headvirt, **headquick;
   Page *lista_pags = NULL;
   FifoPage *fifoAux = NULL, *fifoBux = NULL, *fifoTail = NULL, *fifoHead = NULL;
   Acesso *a = NULL, *amorta = NULL;
   Processo p;
-  Page pagina;
 
   int *lista_frames = NULL;
   struct timeval tv, inicio, fim;
   double totime, ultime = -1;
   int proc_fim = 0, proc_ini = 0;
   int nframes = 0;
-  int i, j, outpag, outframe = 0;
-
+  int i, j, qtyR = 0;
 
   if (fit == 0) fit = 1;
-  if (subst == 0) subst = 3;
-
-  nextNode = NULL;
-  headquick = NULL;
+  if (subst == 0) subst = 1;
 
   if(lista_proc == NULL) {
     printf("Carregue um arquivo para executar.\n");
@@ -55,10 +52,13 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     return;
   }
   else if (subst == 0){
-    printf("Nenhum algoritmo de substituição de página escolhido.\n");
+    printf("Nenhum algoritmo de substituiçao de pagina escolhido.\n");
     return;
   }
 
+  /* inicializaçao das estruturas de dados necessarias */
+  nextNode = NULL;
+  headquick = NULL;
 	headvirt = malloc(sizeof(Node));
 	headvirt->tipo = 'L';
 	headvirt->inicio = 0;
@@ -66,8 +66,8 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 	headvirt->prox = NULL;
 	headvirt->quickprox = NULL;
 
-	if (fit == 3) {
-		headquick = malloc((virtual)*sizeof(Node*));
+	if(fit == 3){
+		headquick = malloc((virtual) * sizeof(Node*));
 		for (i = 0; i < virtual-1; i++)
 			headquick[i] = NULL;
 		headquick[i] = headvirt;
@@ -95,8 +95,16 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
 		totime = (double) fim.tv_sec + fim.tv_usec/10e6 - (inicio.tv_sec + fim.tv_usec/10e6);
 
+    /* a cada 1 segundo */
     if(totime != ultime){
 			ultime = totime;
+
+      /* zera os bits R de cada pagina no intervalo de segundos definido por RESETR */
+      if((int) ultime % RESETR == 0){
+        for(i = 0; i < virtual; i++)
+          lista_pags[i].R = 0;
+      }
+
       /* Checa quais processos ja terminaram */
       for(i = 0; i < proc_ini; i++){
         if(lista_proc[i].tf == (int) ultime && lista_proc[i].init >= 0){
@@ -140,13 +148,15 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
               break;
           }
 
-          /* Tira as páginas e quadros dos processos que acabaram */
+          /* Tira as paginas e quadros dos processos que acabaram */
           for(j = 0; j < lista_proc[i].b; j++){
             p = lista_proc[i];
             if(lista_pags[p.init + j].map != -1){
               lista_frames[lista_pags[p.init + j].map] = 0;
               switch(subst){
                 case 1: /* NRUP */
+                  if(lista_pags[p.init + j].R)
+                    qtyR--;
                   break;
                 case 2: /* FIFO */
 
@@ -158,8 +168,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                   if(fifoAux == fifoHead) fifoHead = fifoHead->prox;
                   else fifoBux->prox = fifoAux->prox;
                   free(fifoAux);
-
-                  nframes--;
                   break;
                 case 3: /* SCP */
 
@@ -171,35 +179,85 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                   if(fifoAux == fifoHead) fifoHead = fifoHead->prox;
                   else fifoBux->prox = fifoAux->prox;
                   free(fifoAux);
-
-                  nframes--;
                   break;
                 case 4: /* LRUP */
                   break;
               }
+              nframes--;
               escreveBin(-1, ftotal, lista_pags[p.init + j].map, 1);
             }
             lista_pags[p.init + j].pid = -1;
             lista_pags[p.init + j].pos = -1;
             lista_pags[p.init + j].map = -1;
             lista_pags[p.init + j].R = 0;
-
           }
-
           lista_proc[i].init = -1;
         }
-
       }
 
-      /* Percorre listas de acessos e checa quais devem ser feitos */
+      /* aloca memoria para os novos processos */
+      while(lista_proc[proc_ini].t0 == ultime){
+        switch(fit){
+        	case 1: /* FirstFit */
+            lista_proc[proc_ini].init = firstFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
+            break;
+		      case 2: /* NextFit */
+            lista_proc[proc_ini].init = nextFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
+            break;
+          case 3: /* QuickFit*/
+            lista_proc[proc_ini].init = quickFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headquick, virtual);
+            break;
+        }
+        p = lista_proc[proc_ini];
+        for(i = 0; i < p.b; i++){
+          lista_pags[p.init + i].pid = proc_ini;
+          lista_pags[p.init + i].pos = i;
+          lista_pags[p.init + i].map = -1;
+        }
+        proc_ini++;
+      }
+
+      /* percorre listas de acessos e checa quais devem ser feitos */
       for(i = 0; i < proc_ini; i++){
         a = lista_proc[i].head;
         if(a != NULL){
           if(a->inst <= (int) ultime){
-            pagina = lista_pags[lista_proc[i].init + a->pos];
             if(lista_pags[lista_proc[i].init + a->pos].map == -1){ /* PageFault!! Chamamos algum algoritmo de substituicao*/
               switch(subst){
                 case 1: /* NRUP */
+                  if(nframes == total){
+                    if(qtyR == total){
+                      for(j = 0; j < virtual; j++){
+                        if(lista_pags[j].map != -1){
+                          lista_pags[lista_proc[i].init + a->pos].map = lista_pags[j].map;
+                          lista_pags[lista_proc[i].init + a->pos].R = 1;
+                          lista_pags[j].map = -1;
+                          lista_pags[j].R = 0;
+                          break;
+                        }
+                      }
+                    }
+                    else{
+                      for(j = 0; j < virtual; j++){
+                        if(lista_pags[j].map != -1 && lista_pags[j].R == FALSE){
+                          lista_pags[lista_proc[i].init + a->pos].map = lista_pags[j].map;
+                          lista_pags[lista_proc[i].init + a->pos].R = 1;
+                          lista_pags[j].map = -1;
+                          lista_pags[j].R = 0;
+                          qtyR++;
+                          break;
+                        }
+                      }
+                    }
+                  }
+                  else{
+                    for(j = 0; j < total && lista_frames[j] == TRUE; j++);
+                    lista_frames[j] = TRUE;
+                    lista_pags[lista_proc[i].init + a->pos].map = j;
+                    lista_pags[lista_proc[i].init + a->pos].R = TRUE;
+                    nframes++;
+                    qtyR++;
+                  }
                   break;
                 case 2: /* FIFO */
                   if (nframes == total){
@@ -217,8 +275,9 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                   else{
                     for(j = 0; j < total && lista_frames[j] == TRUE; j++);
                     lista_frames[j] = TRUE;
-                    nframes++;
                     lista_pags[lista_proc[i].init + a->pos].map = j;
+                    lista_pags[lista_proc[i].init + a->pos].R = TRUE;
+                    nframes++;
                     if(fifoHead == NULL){
                       fifoHead = malloc(sizeof(FifoPage));
                       fifoHead->prox = NULL;
@@ -232,7 +291,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                       fifoTail->prox = NULL;
                     }
                   }
-                  escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
                   break;
                 case 3: /* SCP */
                   if (nframes == total){
@@ -257,8 +315,9 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                   else{
                     for(j = 0; j < total && lista_frames[j] == TRUE; j++);
                     lista_frames[j] = TRUE;
-                    nframes++;
                     lista_pags[lista_proc[i].init + a->pos].map = j;
+                    lista_pags[lista_proc[i].init + a->pos].R = TRUE;
+                    nframes++;
                     if(fifoHead == NULL){
                       fifoHead = malloc(sizeof(FifoPage));
                       fifoHead->prox = NULL;
@@ -272,12 +331,11 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
                       fifoTail->prox = NULL;
                     }
                   }
-                  escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
                   break;
                 case 4: /* LRUP */
                   break;
               }
-
+              escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
             }
 
             amorta = a;
@@ -287,38 +345,19 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
         }
       }
 
-      while(lista_proc[proc_ini].t0 == ultime){
-        switch(fit){
-        	case 1: /* FirstFit */
-            lista_proc[proc_ini].init = firstFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
-            break;
-		      case 2: /* NextFit */
-            lista_proc[proc_ini].init = nextFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headvirt);
-            break;
-          case 3: /* QuickFit*/
-            lista_proc[proc_ini].init = quickFit(fvirtual, proc_ini, lista_proc[proc_ini].b, headquick, virtual);
-            break;
-        }
-        p = lista_proc[proc_ini];
-        for(i = 0; i < p.b; i++){
-          lista_pags[p.init + i].pid = proc_ini;
-          lista_pags[p.init + i].pos = i;
-          lista_pags[p.init + i].map = -1;
-        }
-        proc_ini++;
-      }
+      /* imprime estado da memoria de acordo com o intervalo especificado */
       if ((int) ultime % intv == 0){
 
           printf("Instante atual: %d\n", (int) ultime);
 
-          /* printf("Paginas (memoria virtual):\n");
+          /*printf("Paginas (memoria virtual):\n");
           imprimePags(lista_pags, virtual);
           printf("Quadros (memoria fisica):\n");
           imprimeFrames(lista_frames, total);
 
-          imprimeFifo(fifoHead); */
+          imprimeFifo(fifoHead);
 
-          /*for(i = 0; i < nproc; i++){
+          for(i = 0; i < nproc; i++){
             imprimeProc(lista_proc[i]);
             printf("\n");
           }
@@ -353,7 +392,7 @@ int main(){
 
   while(1) {
 
-    snprintf(shell_prompt, sizeof(shell_prompt), "[ep2] ");
+    snprintf(shell_prompt, sizeof(shell_prompt), "[ep2]: ");
     input = readline(shell_prompt);
     add_history(input);
   	argv = tokenize(input);
@@ -387,7 +426,7 @@ int main(){
           imprimeProc(lista_proc[i]);
       }
       else
-        printf("Não há processos.\n");
+        printf("Nao ha processos.\n");
     }
   	else if (strcmp(argv[0], "espaco") == 0) {
   		fit = atoi(argv[1]);
@@ -475,10 +514,10 @@ int main(){
 		else {
 			printf("Lista de comandos:\n");
 			printf("carrega <nome>    -- carrega um arquivo de entrada\n");
-			printf("espaco <1-3>      -- escolhe entre os métodos FirstFit, NextFit e QuickFit\n");
-			printf("substitui <1-4>   -- escolhe entre os métodos com substiuição de página: FIFO, NRUP, SCUP, LRUP\n");
+			printf("espaco <1-3>      -- escolhe entre os metodos FirstFit, NextFit e QuickFit\n");
+			printf("substitui <1-4>   -- escolhe entre os metodos de substiuiçao de pagina: NRUP, FIFO, SCUP, LRUP\n");
 			printf("imprime           -- imprime a lista de processos\n");
-			printf("executa <inteiro> -- executa o método selecionado com a entrada carregada; opcional: número de segundos para imprimir o estado dos arquivos (default = 1)\n");
+			printf("executa <inteiro> -- executa o metodo selecionado com a entrada carregada; opcional: número de segundos para imprimir o estado dos arquivos (default = 1)\n");
 			printf("sai               -- encerra o programa\n");
 		}
   }
