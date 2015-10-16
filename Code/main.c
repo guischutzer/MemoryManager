@@ -115,13 +115,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
       if((int) ultime % RESETR == 0){
         for(i = 0; i < virtual; i++)
           lista_pags[i].R = 0;
-        if(subst == 4){
-          for(i = 0; i < total; i++){
-            for(j = 0; j < total; j++){
-              matriz[i][j] = 0;
-            }
-          }
-        }
       }
 
       if(subst == 4) imprimeMatriz(matriz, total);
