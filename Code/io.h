@@ -1,5 +1,4 @@
 
-
 void imprimeBin(FILE* arquivo, int arqsize);
 
 Processo inputProcesso(char* linha);

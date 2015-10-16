@@ -67,7 +67,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 	headvirt->quickprox = NULL;
 
 	if(fit == 3){
-		headquick = malloc((virtual) * sizeof(Node*));
+    headquick = malloc((virtual) * sizeof(Node*));
 		for (i = 0; i < virtual-1; i++)
 			headquick[i] = NULL;
 		headquick[i] = headvirt;
