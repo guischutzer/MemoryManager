@@ -36,7 +36,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   int i, j, k, l, menor, linha, menor_index, qtyR = 0;
 
   if (fit == 0) fit = 1;
-  if (subst == 0) subst = 4;
+  if (subst == 0) subst = 1;
 
   if(lista_proc == NULL) {
     printf("Carregue um arquivo para executar.\n");
@@ -44,15 +44,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
   }
   if (!nproc){
     printf("Nenhum processo, carregue outro arquivo.\n");
-    return;
-  }
-
-  if (fit == 0){
-    printf("Nenhum algoritmo de Fit escolhido.\n");
-    return;
-  }
-  else if (subst == 0){
-    printf("Nenhum algoritmo de substituiçao de pagina escolhido.\n");
     return;
   }
 
