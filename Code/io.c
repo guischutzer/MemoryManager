@@ -30,12 +30,12 @@ void imprimeFifo(FifoPage *head){
 void imprimeNode(Node* head) {
 	Node* aux = NULL;
 	aux = head;
-  printf("[             HEAD--]\n");
+  printf("[             HEAD---]\n");
 	while (aux != NULL){
-		printf("[--->[%c|%4d|%4d]--]\n", aux->tipo, aux->inicio*16, aux->tamanho*16);
+		printf("[--->[%c|%4d|%4d]---]\n", aux->tipo, aux->inicio*16, aux->tamanho*16);
 		aux = aux->prox;
 	}
-  printf("[--->NULL           ]\n");
+  printf("[--->NULL            ]\n");
 }
 
 void imprimeBin(FILE* arquivo, int tamanho) {
