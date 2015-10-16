@@ -373,7 +373,10 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
           imprimeBin(ftotal, total*16);
           printf("Arquivo binario da memoria virtual: \n");
           imprimeBin(fvirtual, virtual*16);
-          printf ("\n");
+          printf("Estado da lista de memoria: \n");
+          imprimeNode(headvirt);
+          printf("\n");
+
       }
 
     }

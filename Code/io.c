@@ -30,13 +30,12 @@ void imprimeFifo(FifoPage *head){
 void imprimeNode(Node* head) {
 	Node* aux = NULL;
 	aux = head;
+  printf("[             HEAD--]\n");
 	while (aux != NULL){
-		if (aux->tipo == 'L')
-			printf ("Memoria livre de tamanho ");
-		else printf ("Processo ocupando memoria de tamanho ");
-		printf ("%d com inicio em %d.\n", aux->tamanho, aux->inicio);
+		printf("[--->[%c|%4d|%4d]--]\n", aux->tipo, aux->inicio*16, aux->tamanho*16);
 		aux = aux->prox;
 	}
+  printf("[--->NULL           ]\n");
 }
 
 void imprimeBin(FILE* arquivo, int tamanho) {
