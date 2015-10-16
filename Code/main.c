@@ -461,8 +461,10 @@ int main(){
         free(lista_proc);
         lista_proc = NULL;
       }
-      else if(lista_proc != NULL)
+      else if(lista_proc != NULL){
         printf("Arquivo %s carregado com sucesso.\n", argv[1]);
+        executou = FALSE;
+      }
   	}
     else if (strcmp(argv[0], "imprime") == 0){
       if (lista_proc != NULL){
@@ -512,8 +514,10 @@ int main(){
   	}
     else if (strcmp(argv[0], "imprime") == 0) {
   		if (lista_proc != NULL){
-  			for (i = 0; i < nproc; i++)
+  			for (i = 0; i < nproc; i++){
+            printf("\n");
         		imprimeProc(lista_proc[i]);
+        }
   		}
   		else printf("Carregue um arquivo para imprimir.\n");
   	}
@@ -533,9 +537,9 @@ int main(){
 			printf("Iniciando execucao do simulador...\n");
 			ftotal = fopen("/tmp/ep2.mem","wb+");
 			if (ftotal != NULL)
-				printf("ftotal aberto com sucesso!\n");
+				printf("/tmp/ep2.mem aberto com sucesso!\n");
 			else {
-				printf("ERRO: falha ao criar o arquivo ftotal.\n");
+				printf("ERRO: falha ao criar o arquivo /tmp/ep2.mem.\n");
 				return 1;
   	  }
 
@@ -543,11 +547,13 @@ int main(){
 
 			fvirtual = fopen("/tmp/ep2.vir","wb+");
 			if (fvirtual != NULL)
-				printf ("fvirtual aberto com sucesso!\n");
+				printf ("/tmp/ep2.vir aberto com sucesso!\n");
 			else {
-				printf ("ERRO: falha ao criar o arquivo fvirtual.\n");
+				printf ("ERRO: falha ao criar o arquivo /tmp/ep2.vir.\n");
 				return 1;
 			}
+
+      printf("\n");
 
 			escreveBin(-1, fvirtual, 0, virtual);
       executa(lista_proc, ftotal, fvirtual, total, virtual, nproc, fit, subst, intv);

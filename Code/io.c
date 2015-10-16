@@ -13,20 +13,6 @@ Tomas Marcondes Bezerra Paim - 7157602
 #include "utils.h"
 #include "io.h"
 
-void imprimeFifo(FifoPage *head){
-  FifoPage *p;
-
-  printf("FifoPrint\n");
-
-  p = head;
-  while(p != NULL){
-    printf("Pagina: %d\n", p->pag);
-    p = p->prox;
-  }
-
-  printf("Saí\n");
-}
-
 void imprimeNode(Node* head) {
 	Node* aux = NULL;
 	aux = head;

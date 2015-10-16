@@ -24,7 +24,4 @@ utils.o: utils.h utils.c
 	$(CC) -c utils.c $(CFLAGS)
 
 clean:
-	mkdir -p ../bin
-	mv ep2 ../bin/
-	mv testebin ../bin/
 	rm *.o
