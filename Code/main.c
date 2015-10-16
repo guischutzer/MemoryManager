@@ -109,8 +109,6 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
     /* a cada 1 segundo */
     if(totime != ultime){
 
-      if(subst == 4) imprimeMatriz(matriz, total);
-
 			ultime = totime;
 
       /* zera os bits R de cada pagina no intervalo de segundos definido por RESETR */
@@ -118,6 +116,8 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
         for(i = 0; i < virtual; i++)
           lista_pags[i].R = 0;
       }
+
+      if(subst == 4) imprimeMatriz(matriz, total);
 
       /* Checa quais processos ja terminaram */
       for(i = 0; i < proc_ini; i++){
