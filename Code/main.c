@@ -342,6 +342,7 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
             }
             escreveBin(i, ftotal, lista_pags[lista_proc[i].init + a->pos].map, 1);
           }
+          else lista_pags[lista_proc[i].init + a->pos].R = 1;
 
           amorta = a;
           lista_proc[i].head = lista_proc[i].head->prox;
@@ -355,12 +356,13 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
 
           printf("Instante atual: %d\n", (int) ultime);
 
-          /* printf("Paginas (memoria virtual):\n");
+          printf("Paginas (memoria virtual):\n");
           imprimePags(lista_pags, virtual);
           printf("Quadros (memoria fisica):\n");
           imprimeFrames(lista_frames, total);
 
-          imprimeFifo(fifoHead); */
+          imprimeFifo(fifoHead);
+          imprime ("qtyR = %d\n", qtyR);
 
           /* for(i = 0; i < nproc; i++){
             imprimeProc(lista_proc[i]);
@@ -369,13 +371,13 @@ void executa(Processo* lista_proc, FILE *ftotal, FILE *fvirtual, int total, int 
           printf("\n"); */
 
           
-          printf("Arquivo binario da memoria total: \n");
+          /* printf("Arquivo binario da memoria total: \n");
           imprimeBin(ftotal, total*16);
           printf("Arquivo binario da memoria virtual: \n");
           imprimeBin(fvirtual, virtual*16);
           printf("Estado da lista de memoria: \n");
           imprimeNode(headvirt);
-          printf("\n");
+          printf("\n"); */
 
       }
 
